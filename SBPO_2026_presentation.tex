@@ -1,17 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Beamer Presentation
-% LaTeX Template
-% Version 2.0 (March 8, 2022)
-%
-% This template originates from:
-% https://www.LaTeXTemplates.com
-%
-% Author:
-% Vel (vel@latextemplates.com)
-%
-% License:
-% CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/)
-%
+% Beamer Presentation — SBPO 2026
+% NS-BRKGA para o MOTMDSP
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------------------------
@@ -19,455 +8,721 @@
 %----------------------------------------------------------------------------------------
 
 \documentclass[
-	11pt, % Set the default font size, options include: 8pt, 9pt, 10pt, 11pt, 12pt, 14pt, 17pt, 20pt
-	%t, % Uncomment to vertically align all slide content to the top of the slide, rather than the default centered
-	%aspectratio=169, % Uncomment to set the aspect ratio to a 16:9 ratio which matches the aspect ratio of 1080p and 4K screens and projectors
+	11pt,
+	aspectratio=169, % 16:9 widescreen
 ]{beamer}
 
-\graphicspath{{Images/}{./}} % Specifies where to look for included images (trailing slash required)
+\graphicspath{{Images/}{figs/}{./}} % look for images in these directories
 
-\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule for better rules in tables
+\usepackage{booktabs}
+\usepackage{palatino}
+\usepackage[default]{opensans}
+\usepackage{graphicx}
 
-%----------------------------------------------------------------------------------------
-%	SELECT LAYOUT THEME
-%----------------------------------------------------------------------------------------
-
-% Beamer comes with a number of default layout themes which change the colors and layouts of slides. Below is a list of all themes available, uncomment each in turn to see what they look like.
-
-%\usetheme{default}
-%\usetheme{AnnArbor}
-%\usetheme{Antibes}
-%\usetheme{Bergen}
-%\usetheme{Berkeley}
-%\usetheme{Berlin}
-%\usetheme{Boadilla}
-%\usetheme{CambridgeUS}
-%\usetheme{Copenhagen}
-%\usetheme{Darmstadt}
-%\usetheme{Dresden}
-%\usetheme{Frankfurt}
-%\usetheme{Goettingen}
-%\usetheme{Hannover}
-%\usetheme{Ilmenau}
-%\usetheme{JuanLesPins}
-%\usetheme{Luebeck}
-\usetheme{Madrid}
-%\usetheme{Malmoe}
-%\usetheme{Marburg}
-%\usetheme{Montpellier}
-%\usetheme{PaloAlto}
-%\usetheme{Pittsburgh}
-%\usetheme{Rochester}
-%\usetheme{Singapore}
-%\usetheme{Szeged}
-%\usetheme{Warsaw}
+% TikZ for diagrams
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, backgrounds, calc, fit, positioning, shapes}
 
 %----------------------------------------------------------------------------------------
-%	SELECT COLOR THEME
+%	THEME CONFIGURATION (matches MIC 2026 deck)
 %----------------------------------------------------------------------------------------
 
-% Beamer comes with a number of color themes that can be applied to any layout theme to change its colors. Uncomment each of these in turn to see how they change the colors of your selected layout theme.
-
-%\usecolortheme{albatross}
-%\usecolortheme{beaver}
-%\usecolortheme{beetle}
-%\usecolortheme{crane}
-%\usecolortheme{dolphin}
-%\usecolortheme{dove}
-%\usecolortheme{fly}
-%\usecolortheme{lily}
-%\usecolortheme{monarca}
-%\usecolortheme{seagull}
-%\usecolortheme{seahorse}
-%\usecolortheme{spruce}
-%\usecolortheme{whale}
-%\usecolortheme{wolverine}
-
-%----------------------------------------------------------------------------------------
-%	SELECT FONT THEME & FONTS
-%----------------------------------------------------------------------------------------
-
-% Beamer comes with several font themes to easily change the fonts used in various parts of the presentation. Review the comments beside each one to decide if you would like to use it. Note that additional options can be specified for several of these font themes, consult the beamer documentation for more information.
-
-\usefonttheme{default} % Typeset using the default sans serif font
-%\usefonttheme{serif} % Typeset using the default serif font (make sure a sans font isn't being set as the default font if you use this option!)
-%\usefonttheme{structurebold} % Typeset important structure text (titles, headlines, footlines, sidebar, etc) in bold
-%\usefonttheme{structureitalicserif} % Typeset important structure text (titles, headlines, footlines, sidebar, etc) in italic serif
-%\usefonttheme{structuresmallcapsserif} % Typeset important structure text (titles, headlines, footlines, sidebar, etc) in small caps serif
-
-%------------------------------------------------
-
-%\usepackage{mathptmx} % Use the Times font for serif text
-\usepackage{palatino} % Use the Palatino font for serif text
-
-%\usepackage{helvet} % Use the Helvetica font for sans serif text
-\usepackage[default]{opensans} % Use the Open Sans font for sans serif text
-%\usepackage[default]{FiraSans} % Use the Fira Sans font for sans serif text
-%\usepackage[default]{lato} % Use the Lato font for sans serif text
-
-%----------------------------------------------------------------------------------------
-%	SELECT INNER THEME
-%----------------------------------------------------------------------------------------
-
-% Inner themes change the styling of internal slide elements, for example: bullet points, blocks, bibliography entries, title pages, theorems, etc. Uncomment each theme in turn to see what changes it makes to your presentation.
-
-%\useinnertheme{default}
+\usetheme{CambridgeUS}
+\usecolortheme{beaver}
+\usefonttheme{default}
 \useinnertheme{circles}
-%\useinnertheme{rectangles}
-%\useinnertheme{rounded}
-%\useinnertheme{inmargin}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Show only frame number (not current/total)
+\setbeamertemplate{page number in head/foot}[framenumber]
 
 %----------------------------------------------------------------------------------------
-%	SELECT OUTER THEME
+%	CUSTOM COLOURS (PuOr palette, consistent with prior decks)
 %----------------------------------------------------------------------------------------
 
-% Outer themes change the overall layout of slides, such as: header and footer lines, sidebars and slide titles. Uncomment each theme in turn to see what changes it makes to your presentation.
+\definecolor{mydarkorange1}{RGB}{230, 97, 1}
+\definecolor{mylightorange1}{RGB}{253, 184, 99}
+\definecolor{mylightblue1}{RGB}{178, 171, 210}
+\definecolor{mydarkblue1}{RGB}{94, 60, 153}
+\definecolor{myorange3}{RGB}{229, 118, 26}
+\definecolor{myblue3}{RGB}{127, 114, 180}
 
-%\useoutertheme{default}
-%\useoutertheme{infolines}
-%\useoutertheme{miniframes}
-%\useoutertheme{smoothbars}
-%\useoutertheme{sidebar}
-%\useoutertheme{split}
-%\useoutertheme{shadow}
-%\useoutertheme{tree}
-%\useoutertheme{smoothtree}
+%----------------------------------------------------------------------------------------
+%	CUSTOM COMMANDS
+%----------------------------------------------------------------------------------------
 
-%\setbeamertemplate{footline} % Uncomment this line to remove the footer line in all slides
-%\setbeamertemplate{footline}[page number] % Uncomment this line to replace the footer line in all slides with a simple slide count
-
-%\setbeamertemplate{navigation symbols}{} % Uncomment this line to remove the navigation symbols from the bottom of all slides
+\newcommand{\NIGDplus}{\mathit{NIGD^{+}}}
+\newcommand{\HVR}{\mathit{HVR}}
 
 %----------------------------------------------------------------------------------------
 %	PRESENTATION INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title[Short Title]{Full Presentation Title} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
+\title[\textsc{NS-BRKGA} for MOTMDSP]{%
+\textsc{NS-BRKGA} para o Multi-Objective\\
+Time- and Machine-Dependent\\Scheduling Problem}
 
-\subtitle{Optional Subtitle} % Presentation subtitle, remove this command if a subtitle isn't required
+\author[Luis H. P. Mendes et al.]{%
+Luis H. P. Mendes \and
+F\'{a}bio L. Usberti \and
+M\'{a}rio C. San Felice \and
+Carlos E. de Andrade}
 
-\author[James Cook \and Roald Amundsen]{Capt. James Cook \and Roald Amundsen} % Presenter name(s), the optional parameter can contain a shortened version to appear on the bottom of every slide, while the main parameter will appear on the title slide
+\institute[UNICAMP / UFSCar / AT\&T]{%
+Institute of Computing -- University of Campinas (UNICAMP)\\
+Department of Computing -- Federal University of S\~{a}o Carlos (UFSCar)\\
+AT\&T Labs Research\\
+\smallskip
+\texttt{luis.mendes@ic.unicamp.br}}
 
-\institute[UC]{University of Cambridge \\ \smallskip \textit{james@LaTeXTemplates.com}} % Your institution, the optional parameter can be used for the institution shorthand and will appear on the bottom of every slide after author names, while the required parameter is used on the title slide and can include your email address or additional information on separate lines
+\date[SBPO 2026]{LVIII Simp\'{o}sio Brasileiro de Pesquisa Operacional --- SBPO 2026}
 
-\date[\today]{International Symposium of Explorers \\ \today} % Presentation date or conference/meeting name, the optional parameter can contain a shortened version to appear on the bottom of every slide, while the required parameter value is output to the title slide
-
-%----------------------------------------------------------------------------------------
-
+%========================================================================================
 \begin{document}
 
-%----------------------------------------------------------------------------------------
-%	TITLE SLIDE
-%----------------------------------------------------------------------------------------
+%========================================================================================
+% TITLE SLIDE
+%========================================================================================
 
 \begin{frame}
-	\titlepage % Output the title slide, automatically created using the text entered in the PRESENTATION INFORMATION block above
+\titlepage
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-%	TABLE OF CONTENTS SLIDE
-%----------------------------------------------------------------------------------------
+%========================================================================================
+\section{Motivation \& Context}
 
-% The table of contents outputs the sections and subsections that appear in your presentation, specified with the standard \section and \subsection commands. You may either display all sections and subsections on one slide with \tableofcontents, or display each section at a time on subsequent slides with \tableofcontents[pausesections]. The latter is useful if you want to step through each section and mention what you will discuss.
-
-\begin{frame}
-	\frametitle{Presentation Overview} % Slide title, remove this command for no title
-	
-	\tableofcontents % Output the table of contents (all sections on one slide)
-	%\tableofcontents[pausesections] % Output the table of contents (break sections up across separate slides)
+\begin{frame}[plain]
+\begin{center}
+{\Huge Motivation \\ \& \\ Context}
+\end{center}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
-%	PRESENTATION BODY SLIDES
-%----------------------------------------------------------------------------------------
-
-\section{Text Examples} % Sections are added in order to organize your presentation into discrete blocks, all sections and subsections are automatically output to the table of contents as an overview of the talk but NOT output in the presentation as separate slides
-
-%------------------------------------------------
-
-\subsection{Paragraphs and Lists}
-
 \begin{frame}
-	\frametitle{Paragraphs of Text}
-	
-	Sed iaculis \alert{dapibus gravida}. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.
-	
-	\bigskip % Vertical whitespace
-	
-	% Quote example
-	\begin{quote}
-		Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio.\\
-		--- Someone, somewhere\ldots
-	\end{quote}
-	
-	\bigskip % Vertical whitespace
-	
-	Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis.
-\end{frame}
+\frametitle{Scheduling FOTA Updates for Connected Vehicles}
 
-%------------------------------------------------
+\textbf{Firmware-Over-The-Air (FOTA)} updates must be delivered to
+\textbf{millions of connected vehicles} through a cellular network.
 
-\begin{frame}
-	\frametitle{Lists}
-	\framesubtitle{Bullet Points and Numbered Lists} % Optional subtitle
-	
-	\begin{itemize}
-		\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-		\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus
-		\begin{itemize}
-			\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-			\item Nam cursus est eget velit posuere pellentesque
-		\end{itemize}
-		\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-	\end{itemize}
-	
-	\bigskip % Vertical whitespace
-	
-	\begin{enumerate}
-		\item Nam cursus est eget velit posuere pellentesque
-		\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida 
-	\end{enumerate}
-\end{frame}
+~\\
 
-%------------------------------------------------
+Key challenges:
 
-\subsection{Blocks}
+\begin{itemize}
+\item Vehicles are only \textbf{available in certain time periods} and \textbf{cell sectors}.
 
-\begin{frame}
-	\frametitle{Blocks of Highlighted Text}
-	
-	\begin{block}{Block Title}
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue.
-	\end{block}
-	
-	\begin{exampleblock}{Example Block Title}
-		Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan.
-	\end{exampleblock}
-	
-	\begin{alertblock}{Alert Block Title}
-		Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-	\end{alertblock}
-	
-	\begin{block}{} % Block without title
-		Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci.
-	\end{block}
-\end{frame}
+~\\
 
-%------------------------------------------------
+\item Each cell sector has \textbf{time-varying capacity}.
 
-\subsection{Columns}
+~\\
 
-\begin{frame}
-	\frametitle{Multiple Columns}
-	\framesubtitle{Subtitle} % Optional subtitle
-	
-	\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-		\begin{column}{0.45\textwidth} % Left column width
-			\textbf{Heading}
-			\begin{enumerate}
-				\item Statement
-				\item Explanation
-				\item Example
-			\end{enumerate}
-		\end{column}
-		\begin{column}{0.5\textwidth} % Right column width
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-		\end{column}
-	\end{columns}
-\end{frame}
+\item A global \textbf{bandwidth cap} limits total throughput per period.
 
-%------------------------------------------------
+~\\
 
-\section{Table and Figure Examples}
+\item The scheduling must be done at \textbf{large scale} (up to 10,000 jobs or machines).
+\end{itemize}
 
-\subsection{Table}
-
-\begin{frame}
-	\frametitle{Table}
-	\framesubtitle{Subtitle} % Optional subtitle
-	
-	\begin{table}
-		\begin{tabular}{l l l}
-			\toprule
-			\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-			\midrule
-			Treatment 1 & 0.0003262 & 0.562 \\
-			Treatment 2 & 0.0015681 & 0.910 \\
-			Treatment 3 & 0.0009271 & 0.296 \\
-			\bottomrule
-		\end{tabular}
-		\caption{Table caption}
-	\end{table}
-\end{frame}
-
-%------------------------------------------------
-
-\subsection{Figure}
-
-\begin{frame}
-	\frametitle{Figure}
-	
-	\begin{figure}
-		\includegraphics[width=0.8\linewidth]{creodocs_logo.pdf}
-		\caption{Creodocs logo.}
-	\end{figure}
-\end{frame}
-
-%------------------------------------------------
-
-\section{Mathematics}
-
-\begin{frame}
-	\frametitle{Definitions \& Examples}
-	
-	\begin{definition}
-		A \alert{prime number} is a number that has exactly two divisors.
-	\end{definition}
-	
-	\smallskip % Vertical whitespace
-	
-	\begin{example}
-		\begin{itemize}
-			\item 2 is prime (two divisors: 1 and 2).
-			\item 3 is prime (two divisors: 1 and 3).
-			\item 4 is not prime (\alert{three} divisors: 1, 2, and 4).
-		\end{itemize}
-	\end{example}
-	
-	\smallskip % Vertical whitespace
-	
-	You can also use the \texttt{theorem}, \texttt{lemma}, \texttt{proof} and \texttt{corollary} environments.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-	\frametitle{Theorem, Corollary \& Proof}
-	
-	\begin{theorem}[Mass--energy equivalence]
-		$E = mc^2$
-	\end{theorem}
-	
-	\begin{corollary}
-		$x + y = y + x$
-	\end{corollary}
-	
-	\begin{proof}
-		$\omega + \phi = \epsilon$
-	\end{proof}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-	\frametitle{Equation}
-
-	\begin{equation}
-		\cos^3 \theta =\frac{1}{4}\cos\theta+\frac{3}{4}\cos 3\theta
-	\end{equation}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-	\frametitle{Verbatim}
-	
-	\begin{example}[Theorem Slide Code]
-		\begin{verbatim}
-			\begin{frame}
-				\frametitle{Theorem}
-				\begin{theorem}[Mass--energy equivalence]
-					$E = mc^2$
-				\end{theorem}
-		\end{frame}\end{verbatim} % Must be on the same line
-	\end{example}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-	Slide without title.
-\end{frame}
-
-%------------------------------------------------
-
-\section{Referencing}
-
-\begin{frame}
-	\frametitle{Citing References}
-	
-	An example of the \texttt{\textbackslash cite} command to cite within the presentation:
-	
-	\bigskip % Vertical whitespace
-	
-	This statement requires citation \cite{p1,p2}.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame} % Use [allowframebreaks] to allow automatic splitting across slides if the content is too long
-	\frametitle{References}
-	
-	\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below, you may need to use multiple columns and/or reduce the font size further if you have many references
-		\footnotesize % Reduce the font size in the bibliography
-		
-		\bibitem[Smith, 2022]{p1}
-			John Smith (2022)
-			\newblock Publication title
-			\newblock \emph{Journal Name} 12(3), 45 -- 678.
-			
-		\bibitem[Kennedy, 2023]{p2}
-			Annabelle Kennedy (2023)
-			\newblock Publication title
-			\newblock \emph{Journal Name} 12(3), 45 -- 678.
-	\end{thebibliography}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
-%	ACKNOWLEDGMENTS SLIDE
-%----------------------------------------------------------------------------------------
-
 \begin{frame}
-	\frametitle{Acknowledgements}
-	
-	\begin{columns}[t] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-		\begin{column}{0.45\textwidth} % Left column width
-			\textbf{Smith Lab}
-			\begin{itemize}
-				\item Alice Smith
-				\item Devon Brown
-			\end{itemize}
-			\textbf{Cook Lab}
-			\begin{itemize}
-				\item Margaret
-				\item Jennifer
-				\item Yuan
-			\end{itemize}
-		\end{column}		
-		\begin{column}{0.5\textwidth} % Right column width
-			\textbf{Funding}
-			\begin{itemize}
-				\item British Royal Navy
-				\item Norwegian Government
-			\end{itemize}
-		\end{column}
-	\end{columns}
+\frametitle{From TMDSP to MOTMDSP}
+
+The \textbf{Time- and Machine-Dependent Scheduling Problem (TMDSP)} minimizes only
+$\sum_j C_j$ (total completion time).
+
+~\\
+
+\textbf{Problem:} minimizing $\sum_j C_j$ does \emph{not} necessarily minimize $C_{\max}$.
+
+~\\
+
+\begin{itemize}
+\item The correlation between $\sum_j C_j$ and $C_{\max}$ is \textbf{weak}.
+
+~\\
+
+\item An optimal $\sum_j C_j$ schedule may leave some jobs finishing \textbf{much later} than others.
+\end{itemize}
+
+~\\
+
+$\Rightarrow$ We propose the \textbf{Multi-Objective TMDSP (MOTMDSP)}: minimize both
+$C_{\max}$ and $\sum_j C_j$ \textbf{simultaneously}.
+
 \end{frame}
 
 %----------------------------------------------------------------------------------------
-%	CLOSING SLIDE
-%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Multi-Objective Trade-Off}
 
-\begin{frame}[plain] % The optional argument 'plain' hides the headline and footline
-	\begin{center}
-		{\Huge The End}
-		
-		\bigskip\bigskip % Vertical whitespace
-		
-		{\LARGE Questions? Comments?}
-	\end{center}
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+% Axes
+\draw[-Stealth, thick] (0,0) -- (8.5,0) node[below] {$C_{\max}$};
+\draw[-Stealth, thick] (0,0) -- (0,5.5) node[left] {$\sum_j C_j$};
+
+% Pareto front curve
+\draw[ultra thick, mydarkblue1, smooth, tension=0.7]
+    plot coordinates {(1.2,5.0) (1.8,3.8) (2.6,2.8) (3.6,2.2) (5.0,1.8) (6.5,1.5) (7.8,1.35)};
+
+% Shading the dominated region
+\fill[mylightblue1, opacity=0.15]
+    (1.2,5.0) .. controls (1.8,3.8) and (2.6,2.8) .. (3.6,2.2)
+    .. controls (5.0,1.8) and (6.5,1.5) .. (7.8,1.35)
+    -- (7.8,5.5) -- (1.2,5.5) -- cycle;
+
+% Pareto-optimal points
+\foreach \x/\y in {1.2/5.0, 1.8/3.8, 2.6/2.8, 3.6/2.2, 5.0/1.8, 6.5/1.5, 7.8/1.35} {
+    \fill[mydarkblue1] (\x,\y) circle (3pt);
+}
+
+% Labels
+\node[mydarkblue1, above right, font=\small] at (7.0,1.6) {Best $\sum_j C_j$};
+\node[mydarkblue1, above right, font=\small] at (0.5,4.8) {Best $C_{\max}$};
+
+\node[rotate=0, mydarkblue1] at (5.2,3.8) {\textbf{Pareto front}};
+
+% Annotations
+\node[mydarkorange1, right, text width=3cm, font=\small] at (1.0,1.0) {
+\textbf{Trade-off:}\\
+lower makespan\\
+$\Leftrightarrow$\\
+higher total time};
+\end{tikzpicture}
+\end{center}
+
+\vspace{-0.3em}
+Decision makers choose schedules along the front based on operational priorities.
+
+\end{frame}
+
+%========================================================================================
+\section{Problem Definition}
+
+\begin{frame}[plain]
+\begin{center}
+{\Huge Problem \\ Definition}
+\end{center}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{MOTMDSP -- Key Elements}
 
-\end{document} 
+\begin{columns}[c,onlytextwidth]
+\column{0.52\textwidth}
+\textbf{Sets:}
+\begin{itemize}
+\item $J$: jobs (vehicles to update)
+\item $M$: machines (cell sectors)
+\item $T$: discrete time periods
+\end{itemize}
+
+~\\
+
+\textbf{Parameters:}
+\begin{itemize}
+\item $c_{mt}$: capacity of machine $m$ at period $t$
+\item $\eta_{mt}$: production rate (data per unit)
+\item $q_{jmt}$: resource consumption of job $j$
+\item $d_j$: total demand of job $j$
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Constraints:}
+\begin{itemize}
+\item Each job assigned to $\le 1$ machine per period
+\item Machine capacity $c_{mt}$ respected
+\item Global bandwidth cap $r_{\max}$
+\item At most $k_{\max}$ active jobs per period
+\item Minimum resource usage $r_{\min}$
+\end{itemize}
+
+~\\
+
+\textbf{Decision:} assign each job to machines and periods until its demand $d_j$ is fully served.
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Objective Functions}
+
+\textbf{Minimize simultaneously:}
+
+~\\
+
+\begin{columns}[c,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Makespan}
+\[
+\min \; C_{\max} = \max_{j \in J} C_j
+\]
+The \textbf{last job's completion time}.\\[0.5em]
+\emph{Ensures no job finishes too late.}
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{Total Completion Time}
+\[
+\min \; \sum_{j \in J} C_j
+\]
+The \textbf{sum of all completion times}.\\[0.5em]
+\emph{Maximizes global throughput.}
+\end{block}
+\end{columns}
+
+~\\
+
+These two objectives are \textbf{conflicting}: improving one typically worsens the other.
+
+\end{frame}
+
+%========================================================================================
+\section{Proposed Method}
+
+\begin{frame}[plain]
+\begin{center}
+{\Huge Proposed Method:\\
+\textsc{NS-BRKGA}}
+\end{center}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Why NS-BRKGA?}
+
+\textsc{NS-BRKGA} hybridizes two powerful frameworks:
+
+~\\
+
+\begin{columns}[c,onlytextwidth]
+\column{0.48\textwidth}
+\textbf{From \textsc{BRKGA-MP-IPR}:}
+\begin{itemize}
+\item Random-key chromosome representation
+\item Multi-parent biased crossover
+\item Implicit path-relinking
+\item Shaking \& partial reset
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{From \textsc{NSGA-II}:}
+\begin{itemize}
+\item Non-dominated sorting
+\item Crowding distance diversity
+\item Pareto-based elite selection
+\end{itemize}
+\end{columns}
+
+~\\
+
+\textbf{Key advantage:} the evolutionary engine is \textbf{problem-independent}.
+All MOTMDSP-specific logic resides in a \textbf{specialized decoder}.
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Random-Key Representation}
+
+A chromosome is a vector of real-valued keys:
+\[
+\mathbf{v} = (v_1, v_2, \ldots, v_{|J|}), \qquad v_j \in [0,\,1).
+\]
+
+~\\
+
+\textbf{Decoding:} sort jobs in \textbf{decreasing order} of their keys
+$\Rightarrow$ this defines a \textbf{priority order} for scheduling.
+
+~\\
+
+\begin{center}
+\begin{tikzpicture}[>=Stealth, scale=0.9]
+% Chromosome
+\node[font=\footnotesize] at (-1.3,0) {$\mathbf{v}$:};
+\foreach \val [count=\i from 0] in {0.81, 0.23, 0.65, 0.42, 0.97} {
+    \node[draw, minimum width=1.1cm, minimum height=0.7cm, font=\footnotesize]
+        at (\i*1.2, 0) {\val};
+    \node[font=\scriptsize, above] at (\i*1.2, 0.45) {$j_{\the\numexpr\i+1}$};
+}
+
+% Arrow
+\draw[-Stealth, ultra thick, mydarkorange1] (5.2,0) -- (6.2,0);
+
+% Priority
+\node[font=\footnotesize] at (6.6,0.45) {\textbf{Priority:}};
+\foreach \job [count=\i from 0] in {$j_5$, $j_1$, $j_3$, $j_4$, $j_2$} {
+    \node[draw, fill=mylightorange1!50, minimum width=0.9cm, minimum height=0.7cm, font=\footnotesize]
+        at (7.7+\i*1.0, 0) {\job};
+}
+\end{tikzpicture}
+\end{center}
+
+~\\
+
+Small perturbations in keys $\Rightarrow$ small changes in job order.
+Enables \textbf{smooth exploration} of scheduling permutations.
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Specialized Decoder}
+
+Given a chromosome $\mathbf{v}$, the decoder builds a \textbf{feasible left-shifted schedule}:
+
+~\\
+
+\begin{enumerate}
+\item \textbf{Sort} jobs by decreasing key value (priority order).
+
+~\\
+
+\item For each job in priority order:
+    \begin{itemize}
+    \item Assign to the \textbf{earliest feasible machine-period} intervals.
+    \item Respect all constraints ($c_{mt}$, $r_{\max}$, $k_{\max}$, $r_{\min}$).
+    \item Continue until demand $d_j$ is fully served.
+    \end{itemize}
+
+~\\
+
+\item Compute $C_j$ for each job, then output $\mathbf{F} = (C_{\max},\; \sum_j C_j)$.
+\end{enumerate}
+
+~\\
+
+The decoder \textbf{always produces a feasible schedule}: no repair or penalty mechanism is needed.
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Evolutionary Cycle}
+
+\begin{figure}
+\centering
+\scalebox{0.62}{
+\begin{tikzpicture}
+% --- Population Pt ---
+\node [fill=mydarkblue1, text=white, text centered, outer sep=0, text width=88, minimum height=55, label={[yshift=5]north:$P_{t}$}] (elite) {\textbf{ELITE}};
+\node at (elite.south) [anchor=north, fill=mydarkorange1, text=white, text width=88, text centered, minimum height=143, outer sep=0] (aux2) {};
+\node at (elite.south) [anchor=north, fill=mydarkorange1, text=white, text width=88, text centered, minimum height=198, outer sep=0] (nonelite) {\textbf{NON-ELITE}};
+
+% --- Population Pt+1 ---
+\node at (elite.east) [anchor=west, fill=mydarkblue1, text=white, text centered, outer sep=0, text width=88, minimum height=55, xshift=139, label={[yshift=5]north:$P_{t + 1}$}] (top) {};
+\node at (top.south) [anchor=north, fill=mydarkorange1, text=white, text centered, outer sep=0, text width=88, minimum height=198] (offspring) {};
+\node at (top.south) [anchor=north, fill=mydarkorange1, text=white, text centered, outer sep=0, text width=88, minimum height=143] (middle) {\textbf{OFFSPRING}};
+\node at (middle.south) [anchor=north, fill=mydarkorange1, text=black, text centered, outer sep=0, text width=88, minimum height=55] (bot) {};
+
+\node at (bot.west) [anchor=east, fill=mydarkorange1, text=white, text centered, outer sep=0, text width=88, minimum height=55, xshift=-139] (aux) {};
+
+% --- Sorting arrow ---
+\node at (elite.west) [anchor=east, text width=55, text centered] (most) {Most fit};
+\node at (aux.west) [anchor=east, text width=55, text centered] (least) {Least fit};
+\node at($(most)!0.5!(least)$) [single arrow, draw=black, fill=white, thick, shape border rotate=180, rotate=90, fill=mylightblue1] (sort) {Crowding Non-Dominated Sort};
+
+% --- Crossover ---
+\node at ($(aux2)!0.5!(middle)$) [circle, fill=black, text=white, text centered, xshift=25, label={[align=flush center, xshift=-25]west:Crossover \\ + \\ Mutation}] (crossover) {\textbf{X}};
+
+% --- Arrows ---
+\draw (elite) edge[-Stealth, thick, black] node[above] {Copy best solutions} (top);
+\draw (elite.east) edge[-Stealth, thick, black, out=300, in=150] node[midway, align=flush left, xshift=55, yshift=07] {Select $\pi^{e}$ \\ parents from \\ elite set} (crossover);
+\draw (aux.east) edge[-Stealth, thick, black, out=60, in=210] node[midway, align=flush left, xshift=55, yshift=-07] {Select $\pi - \pi^{e}$ \\ parents from \\ population} (crossover);
+\draw (crossover.east) edge[-Stealth, thick, black] (middle.west);
+\end{tikzpicture}
+}
+\end{figure}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Additional NS-BRKGA Features}
+
+\begin{columns}[c,onlytextwidth]
+\column{0.50\textwidth}
+\begin{itemize}
+\item \textbf{Biased multi-parent crossover}\\
+$\pi = 3$ parents, bias towards elite.
+
+~\\
+
+\item \textbf{Polynomial mutation}\\
+Small perturbations of random keys.
+
+~\\
+
+\item \textbf{Genotypic diversity}\\
+at elite selection step.
+
+~\\
+
+\item \textbf{Multiple populations}\\
+with periodic migration.
+\end{itemize}
+
+\column{0.50\textwidth}
+\begin{itemize}
+\item \textbf{Implicit Path-Relinking}\\
+Interpolates keys between elite solutions.
+
+~\\
+
+\item \textbf{Shaking}\\
+Strong mutation on stagnation.
+
+~\\
+
+\item \textbf{Partial reset}\\
+Injects fresh random individuals.
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+%========================================================================================
+\section{Computational Experiments}
+
+\begin{frame}[plain]
+\begin{center}
+{\Huge Computational\\Experiments}
+\end{center}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Experimental Setup}
+
+\begin{itemize}
+\item \textbf{96 instances} from the realistic FOTA/TMDSP benchmark:
+    \begin{itemize}
+    \item \texttt{common}: vehicles appear in many sectors/periods.
+    \item \texttt{rare}: vehicles appear in few sectors/periods.
+    \item Up to \textbf{10,000 jobs} or \textbf{10,000 machines}.
+    \end{itemize}
+
+~\\
+
+\item \textbf{5 baseline algorithms} (via PaGMO2, default parameters):\\
+\textsc{NSGA-II}, \textsc{NSPSO}, \textsc{MOEA/D-DE}, \textsc{MHACO}, \textsc{IHS}.
+
+~\\
+
+\item \textbf{5 independent runs} per algorithm and instance.
+
+~\\
+
+\item \textbf{Time budget:} 900 seconds (15 min) per run.
+
+~\\
+
+\item CPU: Intel Xeon E3-1230 V2 @ 3.30\,GHz, 32\,GB RAM, single core.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Performance Indicators}
+
+Two complementary quality indicators:
+
+~\\
+
+\begin{enumerate}
+\item \textbf{Normalized Modified Inverted Generational Distance} ($\NIGDplus$)
+\begin{itemize}
+\item Measures \textbf{convergence} to the reference front.
+\item \textbf{Lower is better}.
+\end{itemize}
+
+~\\
+
+\item \textbf{Hypervolume Ratio} ($\HVR$)
+\begin{itemize}
+\item Measures both \textbf{convergence and diversity}.
+\item \textbf{Higher is better}.
+\end{itemize}
+\end{enumerate}
+
+~\\
+
+Reference fronts: aggregation of all non-dominated solutions from \textbf{all algorithms across all runs}.
+
+\end{frame}
+
+%========================================================================================
+\section{Results \& Analysis}
+
+\begin{frame}[plain]
+\begin{center}
+{\Huge Results \\ \& \\ Analysis}
+\end{center}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Overall Performance}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.42\textwidth]{figs/hypervolume.pdf}
+\includegraphics[width=0.42\textwidth]{figs/igd_plus.pdf}
+\end{figure}
+
+\begin{itemize}
+\item All algorithms achieve $\HVR \ge 0.9998$ --- near saturation.
+\item $\NIGDplus$ provides sharper differentiation: \textsc{NS-BRKGA} achieves the \textbf{lowest} mean $\NIGDplus$ ($2 \times 10^{-5}$, vs.\ $5$--$9 \times 10^{-5}$ for baselines).
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Scalability -- Number of Jobs}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.42\textwidth]{figs/hypervolume_mean_per_jobs.pdf}
+\includegraphics[width=0.42\textwidth]{figs/igd_plus_mean_per_jobs.pdf}
+\end{figure}
+
+\begin{itemize}
+\item $\HVR$ remains near $1.0$ and $\NIGDplus$ stays low across all job counts.
+\item \textbf{No degradation} as the number of jobs increases.
+\item \textsc{NS-BRKGA} consistently among the best curves.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Scalability -- Number of Machines}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.42\textwidth]{figs/hypervolume_mean_per_machines.pdf}
+\includegraphics[width=0.42\textwidth]{figs/igd_plus_mean_per_machines.pdf}
+\end{figure}
+
+\begin{itemize}
+\item Similar stability as the number of machines grows.
+\item All methods maintain strong trade-offs at scale.
+\item \textsc{NS-BRKGA} appears among the top-performing curves.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Instance Type: \texttt{common} vs.\ \texttt{rare}}
+
+\begin{columns}[c,onlytextwidth]
+\column{0.48\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{figs/hypervolume_common_jobs.pdf}\\[0.2em]
+\includegraphics[width=0.80\textwidth]{figs/igd_plus_common_jobs.pdf}
+\end{figure}
+\vspace{-0.5em}
+\begin{center}\small\texttt{common} instances\end{center}
+
+\column{0.48\textwidth}
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{figs/hypervolume_rare_jobs.pdf}\\[0.2em]
+\includegraphics[width=0.80\textwidth]{figs/igd_plus_rare_jobs.pdf}
+\end{figure}
+\vspace{-0.5em}
+\begin{center}\small\texttt{rare} instances\end{center}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Key Observations: \texttt{common} vs.\ \texttt{rare}}
+
+\textbf{\texttt{common} instances:}
+\begin{itemize}
+\item All methods achieve nearly identical performance.
+\item $\HVR \approx 1$ and $\NIGDplus \sim 10^{-5}$ for all algorithms.
+\end{itemize}
+
+~\\
+
+\textbf{\texttt{rare} instances:}
+\begin{itemize}
+\item Convergence is \textbf{more challenging} for all algorithms.
+\item \textsc{NS-BRKGA} stands out with:
+    \begin{itemize}
+    \item Best $\HVR$ ($0.99997$).
+    \item Substantially lower $\NIGDplus$ ($0.00003$ vs.\ $0.00008$--$0.00016$).
+    \end{itemize}
+\item Indicates greater \textbf{robustness} under irregular availability patterns.
+\end{itemize}
+
+\end{frame}
+
+%========================================================================================
+\section{Conclusion}
+
+\begin{frame}[plain]
+\begin{center}
+{\Huge Conclusion}
+\end{center}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Conclusion}
+
+\begin{itemize}
+\item Proposed the \textbf{MOTMDSP}: a bi-objective extension of TMDSP that captures the trade-off between makespan and total completion time.
+
+~\\
+
+\item Developed an \textbf{\textsc{NS-BRKGA}} approach with a specialized greedy decoder.
+
+~\\
+
+\item Extensive experiments on \textbf{96 large-scale FOTA instances} show:\\
+\textsc{NS-BRKGA} is consistently competitive or best on both $\HVR$ and $\NIGDplus$.
+
+~\\
+
+\item Especially strong on \textbf{\texttt{rare} instances}: greater robustness under atypical availability.
+
+~\\
+
+\item \textbf{Practical impact:} diverse Pareto-optimal schedules that help decision makers balance throughput vs.\ last completion time.
+\end{itemize}
+
+\end{frame}
+
+%========================================================================================
+\begin{frame}[plain]
+\begin{center}
+{\Huge Thank you!}
+
+\bigskip\bigskip
+
+{\LARGE Questions?}
+
+\bigskip
+
+\texttt{luis.mendes@ic.unicamp.br}
+\end{center}
+\end{frame}
+
+%========================================================================================
+\end{document}
