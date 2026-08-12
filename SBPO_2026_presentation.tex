@@ -24,7 +24,7 @@
 \usetikzlibrary{arrows, arrows.meta, backgrounds, calc, fit, positioning, shapes}
 
 %----------------------------------------------------------------------------------------
-%	THEME CONFIGURATION (matches MIC 2026 deck)
+%	THEME CONFIGURATION
 %----------------------------------------------------------------------------------------
 
 \usetheme{CambridgeUS}
@@ -35,11 +35,11 @@
 % Remove navigation symbols
 \setbeamertemplate{navigation symbols}{}
 
-% Show only frame number (not current/total)
+% Show only frame number
 \setbeamertemplate{page number in head/foot}[framenumber]
 
 %----------------------------------------------------------------------------------------
-%	CUSTOM COLOURS (PuOr palette, consistent with prior decks)
+%	CUSTOM COLOURS (PuOr palette)
 %----------------------------------------------------------------------------------------
 
 \definecolor{mydarkorange1}{RGB}{230, 97, 1}
@@ -48,6 +48,9 @@
 \definecolor{mydarkblue1}{RGB}{94, 60, 153}
 \definecolor{myorange3}{RGB}{229, 118, 26}
 \definecolor{myblue3}{RGB}{127, 114, 180}
+\definecolor{mygray}{RGB}{200, 200, 200}
+\definecolor{mygreen}{RGB}{76, 169, 12}
+\definecolor{mypurple}{RGB}{202, 162, 221}
 
 %----------------------------------------------------------------------------------------
 %	CUSTOM COMMANDS
@@ -55,6 +58,12 @@
 
 \newcommand{\NIGDplus}{\mathit{NIGD^{+}}}
 \newcommand{\HVR}{\mathit{HVR}}
+\newcommand{\takeaway}[1]{%
+  \vspace{0.3em}
+  \begin{center}
+  \colorbox{mylightorange1!40}{\parbox{0.88\textwidth}{\centering\small\textbf{#1}}}
+  \end{center}
+}
 
 %----------------------------------------------------------------------------------------
 %	PRESENTATION INFORMATION
@@ -91,172 +100,111 @@ AT\&T Labs Research\\
 \end{frame}
 
 %========================================================================================
-\section{Motivation \& Context}
-
-\begin{frame}[plain]
-\begin{center}
-{\Huge Motivation \\ \& \\ Context}
-\end{center}
-\end{frame}
+\section{Motivação}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Scheduling FOTA Updates for Connected Vehicles}
-
-\textbf{Firmware-Over-The-Air (FOTA)} updates must be delivered to
-\textbf{millions of connected vehicles} through a cellular network.
-
-~\\
-
-Key challenges:
-
-\begin{itemize}
-\item Vehicles are only \textbf{available in certain time periods} and \textbf{cell sectors}.
-
-~\\
-
-\item Each cell sector has \textbf{time-varying capacity}.
-
-~\\
-
-\item A global \textbf{bandwidth cap} limits total throughput per period.
-
-~\\
-
-\item The scheduling must be done at \textbf{large scale} (up to 10,000 jobs or machines).
-\end{itemize}
-
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{From TMDSP to MOTMDSP}
-
-The \textbf{Time- and Machine-Dependent Scheduling Problem (TMDSP)} minimizes only
-$\sum_j C_j$ (total completion time).
-
-~\\
-
-\textbf{Problem:} minimizing $\sum_j C_j$ does \emph{not} necessarily minimize $C_{\max}$.
-
-~\\
-
-\begin{itemize}
-\item The correlation between $\sum_j C_j$ and $C_{\max}$ is \textbf{weak}.
-
-~\\
-
-\item An optimal $\sum_j C_j$ schedule may leave some jobs finishing \textbf{much later} than others.
-\end{itemize}
-
-~\\
-
-$\Rightarrow$ We propose the \textbf{Multi-Objective TMDSP (MOTMDSP)}: minimize both
-$C_{\max}$ and $\sum_j C_j$ \textbf{simultaneously}.
-
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Multi-Objective Trade-Off}
-
-\begin{center}
-\begin{tikzpicture}[scale=0.85]
-% Axes
-\draw[-Stealth, thick] (0,0) -- (8.5,0) node[below] {$C_{\max}$};
-\draw[-Stealth, thick] (0,0) -- (0,5.5) node[left] {$\sum_j C_j$};
-
-% Pareto front curve
-\draw[ultra thick, mydarkblue1, smooth, tension=0.7]
-    plot coordinates {(1.2,5.0) (1.8,3.8) (2.6,2.8) (3.6,2.2) (5.0,1.8) (6.5,1.5) (7.8,1.35)};
-
-% Shading the dominated region
-\fill[mylightblue1, opacity=0.15]
-    (1.2,5.0) .. controls (1.8,3.8) and (2.6,2.8) .. (3.6,2.2)
-    .. controls (5.0,1.8) and (6.5,1.5) .. (7.8,1.35)
-    -- (7.8,5.5) -- (1.2,5.5) -- cycle;
-
-% Pareto-optimal points
-\foreach \x/\y in {1.2/5.0, 1.8/3.8, 2.6/2.8, 3.6/2.2, 5.0/1.8, 6.5/1.5, 7.8/1.35} {
-    \fill[mydarkblue1] (\x,\y) circle (3pt);
-}
-
-% Labels
-\node[mydarkblue1, above right, font=\small] at (7.0,1.6) {Best $\sum_j C_j$};
-\node[mydarkblue1, above right, font=\small] at (0.5,4.8) {Best $C_{\max}$};
-
-\node[rotate=0, mydarkblue1] at (5.2,3.8) {\textbf{Pareto front}};
-
-% Annotations
-\node[mydarkorange1, right, text width=3cm, font=\small] at (1.0,1.0) {
-\textbf{Trade-off:}\\
-lower makespan\\
-$\Leftrightarrow$\\
-higher total time};
-\end{tikzpicture}
-\end{center}
-
-\vspace{-0.3em}
-Decision makers choose schedules along the front based on operational priorities.
-
-\end{frame}
-
-%========================================================================================
-\section{Problem Definition}
-
-\begin{frame}[plain]
-\begin{center}
-{\Huge Problem \\ Definition}
-\end{center}
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{MOTMDSP -- Key Elements}
+\frametitle{Veículos conectados precisam de atualizações de firmware}
 
 \begin{columns}[c,onlytextwidth]
-\column{0.52\textwidth}
-\textbf{Sets:}
-\begin{itemize}
-\item $J$: jobs (vehicles to update)
-\item $M$: machines (cell sectors)
-\item $T$: discrete time periods
-\end{itemize}
+\column{0.55\textwidth}
+
+\textbf{Firmware-Over-The-Air (FOTA):} atualização remota de software em
+\textbf{milhões de veículos conectados} via rede celular.
 
 ~\\
 
-\textbf{Parameters:}
-\begin{itemize}
-\item $c_{mt}$: capacity of machine $m$ at period $t$
-\item $\eta_{mt}$: production rate (data per unit)
-\item $q_{jmt}$: resource consumption of job $j$
-\item $d_j$: total demand of job $j$
-\end{itemize}
+Desafios principais:
 
-\column{0.48\textwidth}
-\textbf{Constraints:}
 \begin{itemize}
-\item Each job assigned to $\le 1$ machine per period
-\item Machine capacity $c_{mt}$ respected
-\item Global bandwidth cap $r_{\max}$
-\item At most $k_{\max}$ active jobs per period
-\item Minimum resource usage $r_{\min}$
-\end{itemize}
+\item Veículos disponíveis apenas em \textbf{certos períodos} e \textbf{setores celulares}.
 
 ~\\
 
-\textbf{Decision:} assign each job to machines and periods until its demand $d_j$ is fully served.
+\item Cada setor tem \textbf{capacidade variável} no tempo.
+
+~\\
+
+\item Limite global de \textbf{largura de banda} por período.
+
+~\\
+
+\item Escala: até \textbf{10.000 jobs} ou \textbf{10.000 máquinas}.
+\end{itemize}
+
+\column{0.42\textwidth}
+% TikZ: simplified vehicle availability diagram
+\begin{tikzpicture}[scale=0.55, font=\footnotesize]
+  % Grid
+  \draw[mygray] (0,0) grid[step=1] (5,4);
+  % Axes
+  \draw[-Stealth, thick] (0,0) -- (5.5,0) node[below] {Períodos};
+  \draw[-Stealth, thick] (0,0) -- (0,4.5) node[left, align=center] {Setores\\celulares};
+  % Vehicle availability blocks
+  \fill[mydarkorange1, opacity=0.7] (0,3) rectangle (2,4);
+  \fill[mydarkorange1, opacity=0.7] (3,3) rectangle (5,4);
+  \fill[mydarkblue1, opacity=0.5] (1,2) rectangle (3,3);
+  \fill[mydarkorange1, opacity=0.7] (0,1) rectangle (1,2);
+  \fill[mydarkblue1, opacity=0.5] (2,1) rectangle (4,2);
+  \fill[mydarkblue1, opacity=0.5] (1,0) rectangle (2,1);
+  \fill[mydarkorange1, opacity=0.7] (3,0) rectangle (5,1);
+  % Labels
+  \node[left, font=\scriptsize] at (0,3.5) {$m_1$};
+  \node[left, font=\scriptsize] at (0,2.5) {$m_2$};
+  \node[left, font=\scriptsize] at (0,1.5) {$m_3$};
+  \node[left, font=\scriptsize] at (0,0.5) {$m_4$};
+  \foreach \t in {1,...,5} {
+    \node[below, font=\scriptsize] at (\t-0.5, 0) {$t_{\t}$};
+  }
+  % Legend
+  \fill[mydarkorange1, opacity=0.7] (0.2,-1.0) rectangle (0.7,-0.6);
+  \node[right, font=\scriptsize] at (0.8,-0.8) {Job A};
+  \fill[mydarkblue1, opacity=0.5] (2.5,-1.0) rectangle (3.0,-0.6);
+  \node[right, font=\scriptsize] at (3.1,-0.8) {Job B};
+\end{tikzpicture}
 \end{columns}
 
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Objective Functions}
+\frametitle{Do FOTA ao TMDSP: um problema de escalonamento}
 
-\textbf{Minimize simultaneously:}
+O cenário FOTA origina o \textbf{Time- and Machine-Dependent Scheduling Problem (TMDSP)}:
 
-~\\
+\smallskip
+
+\begin{columns}[c,onlytextwidth]
+\column{0.48\textwidth}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Jobs} = veículos a atualizar.
+\item \textbf{Máquinas} = setores celulares.
+\item \textbf{Períodos} = janelas de tempo discretas.
+\item Capacidades \textbf{variam} por máquina e período.
+\end{itemize}
+
+\column{0.48\textwidth}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Cada job atendido por \textbf{múltiplas máquinas} ao longo do tempo.
+\item Restrições globais: banda, jobs ativos.
+\item Objetivo original: minimizar $\sum_j C_j$.
+\end{itemize}
+\end{columns}
+
+\smallskip
+
+\takeaway{Mas minimizar apenas $\sum_j C_j$ não controla o makespan $C_{\max}$.\\
+Alguns jobs podem terminar \textbf{muito mais tarde} que outros.}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{MOTMDSP: dois objetivos conflitantes}
+
+Propomos o \textbf{Multi-Objective TMDSP (MOTMDSP)}: minimizar \textbf{simultaneamente}:
+
+\smallskip
 
 \begin{columns}[c,onlytextwidth]
 \column{0.48\textwidth}
@@ -264,83 +212,90 @@ Decision makers choose schedules along the front based on operational priorities
 \[
 \min \; C_{\max} = \max_{j \in J} C_j
 \]
-The \textbf{last job's completion time}.\\[0.5em]
-\emph{Ensures no job finishes too late.}
+Último job a terminar.\\
+\emph{Nenhum veículo espera demais.}
 \end{block}
 
 \column{0.48\textwidth}
-\begin{block}{Total Completion Time}
+\begin{block}{Tempo total de conclusão}
 \[
 \min \; \sum_{j \in J} C_j
 \]
-The \textbf{sum of all completion times}.\\[0.5em]
-\emph{Maximizes global throughput.}
+Soma de todos os tempos de conclusão.\\
+\emph{Maximiza o throughput global.}
 \end{block}
 \end{columns}
 
-~\\
+\vspace{0.2em}
 
-These two objectives are \textbf{conflicting}: improving one typically worsens the other.
+\begin{center}
+\begin{tikzpicture}[scale=0.55]
+% Axes
+\draw[-Stealth, thick] (0,0) -- (7.5,0) node[below] {$C_{\max}$};
+\draw[-Stealth, thick] (0,0) -- (0,4.5) node[left] {$\sum_j C_j$};
+% Pareto front curve
+\draw[ultra thick, mydarkblue1, smooth, tension=0.7]
+    plot coordinates {(1.0,4.0) (1.6,3.0) (2.4,2.2) (3.4,1.7) (4.8,1.4) (6.2,1.2) (7.0,1.1)};
+% Points
+\foreach \x/\y in {1.0/4.0, 1.6/3.0, 2.4/2.2, 3.4/1.7, 4.8/1.4, 6.2/1.2, 7.0/1.1} {
+    \fill[mydarkblue1] (\x,\y) circle (2.5pt);
+}
+% Labels
+\node[mydarkblue1, font=\small] at (4.5,3.0) {\textbf{Fronteira de Pareto}};
+\node[mydarkorange1, font=\scriptsize, text width=2.5cm, align=center] at (1.0,1.2) {Trade-off:\\menor $C_{\max}$\\$\Leftrightarrow$\\maior $\sum C_j$};
+\end{tikzpicture}
+\end{center}
 
 \end{frame}
 
 %========================================================================================
-\section{Proposed Method}
-
-\begin{frame}[plain]
-\begin{center}
-{\Huge Proposed Method:\\
-\textsc{NS-BRKGA}}
-\end{center}
-\end{frame}
+\section{Método Proposto}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Why NS-BRKGA?}
+\frametitle{NS-BRKGA = BRKGA + NSGA-II}
 
-\textsc{NS-BRKGA} hybridizes two powerful frameworks:
+\textsc{NS-BRKGA} combina dois frameworks poderosos:
 
-~\\
+\smallskip
 
 \begin{columns}[c,onlytextwidth]
 \column{0.48\textwidth}
-\textbf{From \textsc{BRKGA-MP-IPR}:}
-\begin{itemize}
-\item Random-key chromosome representation
-\item Multi-parent biased crossover
-\item Implicit path-relinking
-\item Shaking \& partial reset
+\textbf{De \textsc{BRKGA-MP-IPR}:}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Cromossomo de \textbf{chaves aleatórias}
+\item Crossover enviesado multi-parental
+\item Path-relinking implícito
+\item Shaking \& reset parcial
 \end{itemize}
 
 \column{0.48\textwidth}
-\textbf{From \textsc{NSGA-II}:}
-\begin{itemize}
-\item Non-dominated sorting
-\item Crowding distance diversity
-\item Pareto-based elite selection
+\textbf{De \textsc{NSGA-II}:}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Non-dominated sorting}
+\item \textbf{Crowding distance}
+\item Seleção de elite baseada em Pareto
 \end{itemize}
 \end{columns}
 
-~\\
+\smallskip
 
-\textbf{Key advantage:} the evolutionary engine is \textbf{problem-independent}.
-All MOTMDSP-specific logic resides in a \textbf{specialized decoder}.
+\takeaway{O motor evolutivo é \textbf{independente do problema}.\\
+Toda a lógica do MOTMDSP está no \textbf{decodificador}.}
 
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Random-Key Representation}
+\frametitle{Chaves aleatórias definem prioridades de escalonamento}
 
-A chromosome is a vector of real-valued keys:
+Um cromossomo é um vetor de valores reais:
 \[
 \mathbf{v} = (v_1, v_2, \ldots, v_{|J|}), \qquad v_j \in [0,\,1).
 \]
 
-~\\
-
-\textbf{Decoding:} sort jobs in \textbf{decreasing order} of their keys
-$\Rightarrow$ this defines a \textbf{priority order} for scheduling.
+\textbf{Decodificação:} ordenar jobs por valor \textbf{decrescente} da chave
+$\Rightarrow$ define a \textbf{ordem de prioridade}.
 
 ~\\
 
@@ -358,7 +313,7 @@ $\Rightarrow$ this defines a \textbf{priority order} for scheduling.
 \draw[-Stealth, ultra thick, mydarkorange1] (5.2,0) -- (6.2,0);
 
 % Priority
-\node[font=\footnotesize] at (6.6,0.45) {\textbf{Priority:}};
+\node[font=\footnotesize] at (6.6,0.45) {\textbf{Prioridade:}};
 \foreach \job [count=\i from 0] in {$j_5$, $j_1$, $j_3$, $j_4$, $j_2$} {
     \node[draw, fill=mylightorange1!50, minimum width=0.9cm, minimum height=0.7cm, font=\footnotesize]
         at (7.7+\i*1.0, 0) {\job};
@@ -368,54 +323,50 @@ $\Rightarrow$ this defines a \textbf{priority order} for scheduling.
 
 ~\\
 
-Small perturbations in keys $\Rightarrow$ small changes in job order.
-Enables \textbf{smooth exploration} of scheduling permutations.
+Pequenas perturbações nas chaves $\Rightarrow$ pequenas mudanças na ordem.\\
+Permite \textbf{exploração suave} do espaço de permutações.
 
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Specialized Decoder}
+\frametitle{Decodificador: de prioridades a escalonamentos viáveis}
 
-Given a chromosome $\mathbf{v}$, the decoder builds a \textbf{feasible left-shifted schedule}:
+Dado um cromossomo $\mathbf{v}$, o decodificador constrói um \textbf{escalonamento viável left-shifted}:
 
-~\\
+\smallskip
 
-\begin{enumerate}
-\item \textbf{Sort} jobs by decreasing key value (priority order).
+\begin{enumerate}\setlength{\itemsep}{4pt}
+\item \textbf{Ordenar} jobs por valor decrescente da chave.
 
-~\\
-
-\item For each job in priority order:
-    \begin{itemize}
-    \item Assign to the \textbf{earliest feasible machine-period} intervals.
-    \item Respect all constraints ($c_{mt}$, $r_{\max}$, $k_{\max}$, $r_{\min}$).
-    \item Continue until demand $d_j$ is fully served.
+\item Para cada job na ordem de prioridade:
+    \begin{itemize}\setlength{\itemsep}{1pt}
+    \item Alocar nos \textbf{primeiros intervalos máquina-período} viáveis.
+    \item Respeitar capacidades $c_{mt}$, banda $r_{\max}$, limite $k_{\max}$.
+    \item Continuar até a demanda $d_j$ ser totalmente atendida.
     \end{itemize}
 
-~\\
-
-\item Compute $C_j$ for each job, then output $\mathbf{F} = (C_{\max},\; \sum_j C_j)$.
+\item Calcular $C_j$ para cada job, retornar $\mathbf{F} = (C_{\max},\; \sum_j C_j)$.
 \end{enumerate}
 
-~\\
+\smallskip
 
-The decoder \textbf{always produces a feasible schedule}: no repair or penalty mechanism is needed.
+\takeaway{O decodificador \textbf{sempre produz soluções viáveis}: sem reparo ou penalidade.}
 
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Evolutionary Cycle}
+\frametitle{Ciclo evolutivo do NS-BRKGA}
 
 \begin{figure}
 \centering
-\scalebox{0.62}{
+\scalebox{0.60}{
 \begin{tikzpicture}
 % --- Population Pt ---
 \node [fill=mydarkblue1, text=white, text centered, outer sep=0, text width=88, minimum height=55, label={[yshift=5]north:$P_{t}$}] (elite) {\textbf{ELITE}};
 \node at (elite.south) [anchor=north, fill=mydarkorange1, text=white, text width=88, text centered, minimum height=143, outer sep=0] (aux2) {};
-\node at (elite.south) [anchor=north, fill=mydarkorange1, text=white, text width=88, text centered, minimum height=198, outer sep=0] (nonelite) {\textbf{NON-ELITE}};
+\node at (elite.south) [anchor=north, fill=mydarkorange1, text=white, text width=88, text centered, minimum height=198, outer sep=0] (nonelite) {\textbf{NÃO-ELITE}};
 
 % --- Population Pt+1 ---
 \node at (elite.east) [anchor=west, fill=mydarkblue1, text=white, text centered, outer sep=0, text width=88, minimum height=55, xshift=139, label={[yshift=5]north:$P_{t + 1}$}] (top) {};
@@ -426,152 +377,67 @@ The decoder \textbf{always produces a feasible schedule}: no repair or penalty m
 \node at (bot.west) [anchor=east, fill=mydarkorange1, text=white, text centered, outer sep=0, text width=88, minimum height=55, xshift=-139] (aux) {};
 
 % --- Sorting arrow ---
-\node at (elite.west) [anchor=east, text width=55, text centered] (most) {Most fit};
-\node at (aux.west) [anchor=east, text width=55, text centered] (least) {Least fit};
-\node at($(most)!0.5!(least)$) [single arrow, draw=black, fill=white, thick, shape border rotate=180, rotate=90, fill=mylightblue1] (sort) {Crowding Non-Dominated Sort};
+\node at (elite.west) [anchor=east, text width=55, text centered] (most) {Mais apto};
+\node at (aux.west) [anchor=east, text width=55, text centered] (least) {Menos apto};
+\node at($(most)!0.5!(least)$) [single arrow, draw=black, fill=white, thick, shape border rotate=180, rotate=90, fill=mylightblue1] (sort) {Non-Dominated Sort + Crowding};
 
 % --- Crossover ---
-\node at ($(aux2)!0.5!(middle)$) [circle, fill=black, text=white, text centered, xshift=25, label={[align=flush center, xshift=-25]west:Crossover \\ + \\ Mutation}] (crossover) {\textbf{X}};
+\node at ($(aux2)!0.5!(middle)$) [circle, fill=black, text=white, text centered, xshift=25, label={[align=flush center, xshift=-25]west:Crossover \\ + \\ Mutação}] (crossover) {\textbf{X}};
 
 % --- Arrows ---
-\draw (elite) edge[-Stealth, thick, black] node[above] {Copy best solutions} (top);
-\draw (elite.east) edge[-Stealth, thick, black, out=300, in=150] node[midway, align=flush left, xshift=55, yshift=07] {Select $\pi^{e}$ \\ parents from \\ elite set} (crossover);
-\draw (aux.east) edge[-Stealth, thick, black, out=60, in=210] node[midway, align=flush left, xshift=55, yshift=-07] {Select $\pi - \pi^{e}$ \\ parents from \\ population} (crossover);
+\draw (elite) edge[-Stealth, thick, black] node[above] {Copiar melhores} (top);
+\draw (elite.east) edge[-Stealth, thick, black, out=300, in=150] node[midway, align=flush left, xshift=55, yshift=07] {$\pi^{e}$ pais \\ do elite} (crossover);
+\draw (aux.east) edge[-Stealth, thick, black, out=60, in=210] node[midway, align=flush left, xshift=55, yshift=-07] {$\pi - \pi^{e}$ pais \\ da população} (crossover);
 \draw (crossover.east) edge[-Stealth, thick, black] (middle.west);
 \end{tikzpicture}
 }
 \end{figure}
 
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Additional NS-BRKGA Features}
-
-\begin{columns}[c,onlytextwidth]
-\column{0.50\textwidth}
-\begin{itemize}
-\item \textbf{Biased multi-parent crossover}\\
-$\pi = 3$ parents, bias towards elite.
-
-~\\
-
-\item \textbf{Polynomial mutation}\\
-Small perturbations of random keys.
-
-~\\
-
-\item \textbf{Genotypic diversity}\\
-at elite selection step.
-
-~\\
-
-\item \textbf{Multiple populations}\\
-with periodic migration.
-\end{itemize}
-
-\column{0.50\textwidth}
-\begin{itemize}
-\item \textbf{Implicit Path-Relinking}\\
-Interpolates keys between elite solutions.
-
-~\\
-
-\item \textbf{Shaking}\\
-Strong mutation on stagnation.
-
-~\\
-
-\item \textbf{Partial reset}\\
-Injects fresh random individuals.
-\end{itemize}
-\end{columns}
+Adicionalmente: \textbf{múltiplas populações} com migração, \textbf{path-relinking} implícito, \textbf{shaking} em estagnação.
 
 \end{frame}
 
 %========================================================================================
-\section{Computational Experiments}
+\section{Experimentos Computacionais}
 
-\begin{frame}[plain]
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Configuração experimental}
+
 \begin{center}
-{\Huge Computational\\Experiments}
+\begin{tabular}{@{} l l @{}}
+\toprule
+\textbf{Parâmetro} & \textbf{Valor} \\
+\midrule
+Instâncias & \textbf{97} instâncias FOTA realistas \\
+ & \quad 49 \texttt{common} + 48 \texttt{rare} \\
+ & \quad até 10.000 jobs ou 10.000 máquinas \\
+\addlinespace
+Algoritmos & \textsc{NS-BRKGA} (proposto) \\
+ & \textsc{NSGA-II}, \textsc{NSPSO}, \textsc{MOEA/D-DE}, \\
+ & \textsc{MHACO}, \textsc{IHS} (PaGMO2) \\
+\addlinespace
+Execuções & 5 por algoritmo/instância \\
+Tempo limite & 900\,s (15 min) por execução \\
+Hardware & Intel Xeon E3-1230 V2, 32\,GB, 1 core \\
+\addlinespace
+Indicadores & $\NIGDplus$ (convergência, $\downarrow$) \\
+ & $\HVR$ (convergência + diversidade, $\uparrow$) \\
+\bottomrule
+\end{tabular}
 \end{center}
-\end{frame}
 
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Experimental Setup}
-
-\begin{itemize}
-\item \textbf{96 instances} from the realistic FOTA/TMDSP benchmark:
-    \begin{itemize}
-    \item \texttt{common}: vehicles appear in many sectors/periods.
-    \item \texttt{rare}: vehicles appear in few sectors/periods.
-    \item Up to \textbf{10,000 jobs} or \textbf{10,000 machines}.
-    \end{itemize}
-
-~\\
-
-\item \textbf{5 baseline algorithms} (via PaGMO2, default parameters):\\
-\textsc{NSGA-II}, \textsc{NSPSO}, \textsc{MOEA/D-DE}, \textsc{MHACO}, \textsc{IHS}.
-
-~\\
-
-\item \textbf{5 independent runs} per algorithm and instance.
-
-~\\
-
-\item \textbf{Time budget:} 900 seconds (15 min) per run.
-
-~\\
-
-\item CPU: Intel Xeon E3-1230 V2 @ 3.30\,GHz, 32\,GB RAM, single core.
-\end{itemize}
-
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Performance Indicators}
-
-Two complementary quality indicators:
-
-~\\
-
-\begin{enumerate}
-\item \textbf{Normalized Modified Inverted Generational Distance} ($\NIGDplus$)
-\begin{itemize}
-\item Measures \textbf{convergence} to the reference front.
-\item \textbf{Lower is better}.
-\end{itemize}
-
-~\\
-
-\item \textbf{Hypervolume Ratio} ($\HVR$)
-\begin{itemize}
-\item Measures both \textbf{convergence and diversity}.
-\item \textbf{Higher is better}.
-\end{itemize}
-\end{enumerate}
-
-~\\
-
-Reference fronts: aggregation of all non-dominated solutions from \textbf{all algorithms across all runs}.
+\vspace{0.3em}
+{\small Fronteiras de referência: agregação de todas as soluções não-dominadas de \textbf{todos os algoritmos e execuções}.}
 
 \end{frame}
 
 %========================================================================================
-\section{Results \& Analysis}
-
-\begin{frame}[plain]
-\begin{center}
-{\Huge Results \\ \& \\ Analysis}
-\end{center}
-\end{frame}
+\section{Resultados}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Overall Performance}
+\frametitle{NS-BRKGA atinge o melhor NIGD+ e HVR global}
 
 \begin{figure}
 \centering
@@ -580,15 +446,17 @@ Reference fronts: aggregation of all non-dominated solutions from \textbf{all al
 \end{figure}
 
 \begin{itemize}
-\item All algorithms achieve $\HVR \ge 0.9998$ --- near saturation.
-\item $\NIGDplus$ provides sharper differentiation: \textsc{NS-BRKGA} achieves the \textbf{lowest} mean $\NIGDplus$ ($2 \times 10^{-5}$, vs.\ $5$--$9 \times 10^{-5}$ for baselines).
+\item $\HVR$: todos $\ge 0.999$ --- quase saturado, difícil diferenciar.
+\item $\NIGDplus$ revela diferenças claras: \textsc{NS-BRKGA} atinge o \textbf{menor} $\NIGDplus$ final ($5{,}0 \times 10^{-5}$), seguido por IHS ($6{,}5 \times 10^{-5}$).
 \end{itemize}
+
+\takeaway{O $\NIGDplus$ diferencia melhor os algoritmos quando o $\HVR$ satura.}
 
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Scalability -- Number of Jobs}
+\frametitle{Desempenho estável com o aumento da escala}
 
 \begin{figure}
 \centering
@@ -597,114 +465,72 @@ Reference fronts: aggregation of all non-dominated solutions from \textbf{all al
 \end{figure}
 
 \begin{itemize}
-\item $\HVR$ remains near $1.0$ and $\NIGDplus$ stays low across all job counts.
-\item \textbf{No degradation} as the number of jobs increases.
-\item \textsc{NS-BRKGA} consistently among the best curves.
+\item $\HVR$ permanece próximo de $1{,}0$ e $\NIGDplus$ baixo em todas as escalas.
+\item \textbf{Sem degradação} ao aumentar o número de jobs.
+\item \textsc{NS-BRKGA} consistentemente entre as melhores curvas.
 \end{itemize}
 
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Scalability -- Number of Machines}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.42\textwidth]{figs/hypervolume_mean_per_machines.pdf}
-\includegraphics[width=0.42\textwidth]{figs/igd_plus_mean_per_machines.pdf}
-\end{figure}
-
-\begin{itemize}
-\item Similar stability as the number of machines grows.
-\item All methods maintain strong trade-offs at scale.
-\item \textsc{NS-BRKGA} appears among the top-performing curves.
-\end{itemize}
-
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Instance Type: \texttt{common} vs.\ \texttt{rare}}
+\frametitle{Instâncias \texttt{rare}: onde NS-BRKGA mais se destaca}
 
 \begin{columns}[c,onlytextwidth]
 \column{0.48\textwidth}
-\begin{figure}
-\centering
-\includegraphics[width=0.80\textwidth]{figs/hypervolume_common_jobs.pdf}\\[0.2em]
-\includegraphics[width=0.80\textwidth]{figs/igd_plus_common_jobs.pdf}
-\end{figure}
-\vspace{-0.5em}
-\begin{center}\small\texttt{common} instances\end{center}
+\textbf{Instâncias \texttt{common}:}
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item Todos os métodos: desempenho \textbf{similar}.
+\item $\HVR \approx 1$, $\NIGDplus \sim 10^{-5}$.
+\end{itemize}
+
+\smallskip
+
+\textbf{Instâncias \texttt{rare}:}
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item Convergência \textbf{mais difícil}.
+\item \textsc{NS-BRKGA}: $\NIGDplus = 2{,}5 \times 10^{-5}$ (\textbf{rank 1}).
+\item Baselines: $8 \times 10^{-5}$ a $1{,}6 \times 10^{-4}$.
+\end{itemize}
 
 \column{0.48\textwidth}
 \begin{figure}
 \centering
-\includegraphics[width=0.80\textwidth]{figs/hypervolume_rare_jobs.pdf}\\[0.2em]
-\includegraphics[width=0.80\textwidth]{figs/igd_plus_rare_jobs.pdf}
+\includegraphics[width=0.88\textwidth]{figs/igd_plus_common_jobs.pdf}\\[0.2em]
+\includegraphics[width=0.88\textwidth]{figs/igd_plus_rare_jobs.pdf}
 \end{figure}
-\vspace{-0.5em}
-\begin{center}\small\texttt{rare} instances\end{center}
 \end{columns}
 
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Key Observations: \texttt{common} vs.\ \texttt{rare}}
-
-\textbf{\texttt{common} instances:}
-\begin{itemize}
-\item All methods achieve nearly identical performance.
-\item $\HVR \approx 1$ and $\NIGDplus \sim 10^{-5}$ for all algorithms.
-\end{itemize}
-
-~\\
-
-\textbf{\texttt{rare} instances:}
-\begin{itemize}
-\item Convergence is \textbf{more challenging} for all algorithms.
-\item \textsc{NS-BRKGA} stands out with:
-    \begin{itemize}
-    \item Best $\HVR$ ($0.99997$).
-    \item Substantially lower $\NIGDplus$ ($0.00003$ vs.\ $0.00008$--$0.00016$).
-    \end{itemize}
-\item Indicates greater \textbf{robustness} under irregular availability patterns.
-\end{itemize}
+\takeaway{Em instâncias \texttt{rare}, NS-BRKGA é \textbf{3--6$\times$ melhor} em $\NIGDplus$ que os demais.}
 
 \end{frame}
 
 %========================================================================================
-\section{Conclusion}
-
-\begin{frame}[plain]
-\begin{center}
-{\Huge Conclusion}
-\end{center}
-\end{frame}
+\section{Conclusão}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Conclusion}
+\frametitle{Conclusões}
 
 \begin{itemize}
-\item Proposed the \textbf{MOTMDSP}: a bi-objective extension of TMDSP that captures the trade-off between makespan and total completion time.
+\item Propusemos o \textbf{MOTMDSP}: extensão bi-objetivo do TMDSP para o trade-off entre makespan e tempo total de conclusão.
 
 ~\\
 
-\item Developed an \textbf{\textsc{NS-BRKGA}} approach with a specialized greedy decoder.
+\item Desenvolvemos o \textbf{\textsc{NS-BRKGA}}: motor evolutivo independente do problema + decodificador guloso especializado.
 
 ~\\
 
-\item Extensive experiments on \textbf{96 large-scale FOTA instances} show:\\
-\textsc{NS-BRKGA} is consistently competitive or best on both $\HVR$ and $\NIGDplus$.
+\item Experimentos em \textbf{97 instâncias FOTA de larga escala}:\\
+\textsc{NS-BRKGA} é consistentemente competitivo ou o melhor em $\HVR$ e $\NIGDplus$.
 
 ~\\
 
-\item Especially strong on \textbf{\texttt{rare} instances}: greater robustness under atypical availability.
+\item Especialmente forte em \textbf{instâncias \texttt{rare}}: maior robustez sob padrões irregulares de disponibilidade.
 
 ~\\
 
-\item \textbf{Practical impact:} diverse Pareto-optimal schedules that help decision makers balance throughput vs.\ last completion time.
+\item \textbf{Impacto prático:} fronteiras de Pareto diversas que ajudam tomadores de decisão a balancear throughput vs.\ tempo máximo.
 \end{itemize}
 
 \end{frame}
@@ -712,11 +538,11 @@ Reference fronts: aggregation of all non-dominated solutions from \textbf{all al
 %========================================================================================
 \begin{frame}[plain]
 \begin{center}
-{\Huge Thank you!}
+{\Huge Obrigado!}
 
 \bigskip\bigskip
 
-{\LARGE Questions?}
+{\LARGE Perguntas?}
 
 \bigskip
 
