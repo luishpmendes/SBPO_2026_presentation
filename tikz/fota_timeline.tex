@@ -1,0 +1,68 @@
+% ---------------------------------------------------------------------------
+% Motivação FOTA: o instante de início da transferência muda tudo.
+% Ilustração original, inspirada no cenário descrito por Andrade et al. (2019).
+% ---------------------------------------------------------------------------
+\begin{tikzpicture}[
+  x=1.30cm, y=1.00cm,
+  font=\footnotesize,
+  cell/.style={draw=black!40, line width=0.4pt},
+  data/.style={fill=mydarkblue1, draw=mydarkblue1!55!black, line width=0.4pt},
+  verdict/.style={font=\scriptsize\bfseries, anchor=west, align=left},
+]
+
+% --- pic: carro estilizado (veículo conectado presente na rede) ------------
+\tikzset{
+  carro/.pic={
+    \fill[mydarkblue1!80] (-0.26,0.02) -- (-0.26,0.13) -- (-0.12,0.13)
+      -- (-0.03,0.25) -- (0.14,0.25) -- (0.17,0.13) -- (0.26,0.13)
+      -- (0.26,0.02) -- cycle;
+    \fill[mydarkblue1!80] (-0.14,0.0) circle (0.055);
+    \fill[mydarkblue1!80] (0.14,0.0) circle (0.055);
+  }
+}
+
+% ===========================================================================
+% Faixa de pico da rede (segunda a quinta), atrás de tudo
+% ===========================================================================
+\fill[mylightorange1, opacity=0.50] (3,-1.02) rectangle (7,2.16);
+\draw[mydarkorange1, line width=0.9pt] (3,2.16) -- (7,2.16);
+\node[mydarkorange1, font=\scriptsize\bfseries, anchor=south] at (5,2.22)
+  {per\'iodos de pico da rede};
+
+% --- dias -------------------------------------------------------------------
+\foreach \i/\d in {0/Sex, 1/S\'ab, 2/Dom, 3/Seg, 4/Ter, 5/Qua, 6/Qui, 7/Sex} {
+  \node[anchor=south, font=\scriptsize] at (\i+0.5, 1.66) {\d};
+}
+
+% --- disponibilidade do veículo (a mesma nos dois cenários) ----------------
+\node[anchor=east, font=\scriptsize, text=mydarkblue1!80!black]
+  at (-0.14, 1.34) {ve\'iculo na rede};
+\foreach \i in {0,3,5,7} { \path (\i+0.5,1.22) pic[scale=1.0] {carro}; }
+
+% ===========================================================================
+% Cenário (a): início na segunda-feira -- tudo cai no pico
+% ===========================================================================
+\node[anchor=east, align=right, font=\scriptsize]
+  at (-0.14, 0.48) {\textbf{(a)} in\'icio\\na segunda};
+\foreach \i in {0,...,7} { \draw[cell] (\i,0.10) rectangle (\i+1,0.86); }
+\fill[data] (3.08,0.18) rectangle (3.92,0.78);
+\fill[data] (5.08,0.18) rectangle (5.92,0.78);
+\node[verdict, mydarkorange1] at (8.14,0.48)
+  {toda a transfer\^encia\\cai no pico};
+
+% ===========================================================================
+% Cenário (b): início na sexta-feira -- quase tudo fora do pico
+% ===========================================================================
+\node[anchor=east, align=right, font=\scriptsize]
+  at (-0.14, -0.52) {\textbf{(b)} in\'icio\\na sexta};
+\foreach \i in {0,...,7} { \draw[cell] (\i,-0.90) rectangle (\i+1,-0.14); }
+\fill[data] (0.08,-0.82) rectangle (0.92,-0.22);
+\fill[data] (3.08,-0.82) rectangle (3.92,-0.56);
+\node[verdict, mygreen!55!black] at (8.14,-0.52)
+  {quase tudo\\fora do pico};
+
+% --- legenda ---------------------------------------------------------------
+\fill[data] (0.06,-1.52) rectangle (0.52,-1.30);
+\node[anchor=west, font=\scriptsize] at (0.62,-1.41) {dados transferidos};
+
+\end{tikzpicture}

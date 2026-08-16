@@ -1,0 +1,49 @@
+% ---------------------------------------------------------------------------
+% Estilos compartilhados pelas figuras adaptadas de Andrade et al. (2019).
+%
+% As duas `pics` são reproduzidas literalmente de styles.tikz, do material
+% original dos autores. ATENÇÃO: em `Machine`, o rótulo é desenhado por
+% `node[midway] {#10}` -- isto é, o argumento #1 seguido de um `0` literal.
+% Logo `lenght=10` imprime "100" e `lenght=3` imprime "30". O argumento
+% `label=` declarado nunca é usado. Reescrever isso mudaria silenciosamente
+% todos os números de todas as figuras; alteramos apenas as cores.
+% ---------------------------------------------------------------------------
+
+% Vermelho do "X" de inviabilidade (ATTFunctionalRed no original).
+\definecolor{myred}{RGB}{207, 42, 42}
+
+% Máquinas (figura da instância): as cores identificam a máquina.
+\colorlet{MaqUm}{mylightorange1}
+\colorlet{MaqDois}{mylightblue1}
+
+% Tarefas (figuras do decodificador e do escalonamento): as cores
+% identificam a tarefa.
+\colorlet{JobALight}{mylightorange1}
+\colorlet{JobADark}{mydarkorange1}
+\colorlet{JobBLight}{mylightblue1}
+\colorlet{JobBDark}{mydarkblue1}
+
+% Revelação por overlay mantendo a caixa delimitadora estável: os elementos
+% ocultos continuam ocupando espaço, então a figura não "salta" entre os
+% passos. Mesma técnica usada na apresentação do MIC 2026.
+\tikzset{%
+  invisible/.style={opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}%
+  },
+}
+
+\tikzset{%
+  pics/Machine/.style args={lenght=#1, color=#2, label=#3}{code={%
+      \draw[inner sep=0mm, minimum size=5mm, rounded corners=1.5mm,fill=#2]
+         (0.1, 0.1) rectangle ++($ (#1 - 0.2, 0.8) $);
+    \path (0,0) --  (#1,1) node[midway] {#10};
+  }},%
+  %
+  pics/MachineCap/.style args={lenght=#1}{code={%
+      \draw[inner sep=0mm, minimum size=5mm, rounded corners=1mm,
+            fill=mygray]
+         (0.0, 0.0) rectangle ++($ (#1 + 0.1, 1.1) $);
+  }}%
+}

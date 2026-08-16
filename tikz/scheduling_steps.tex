@@ -1,0 +1,145 @@
+% ---------------------------------------------------------------------------
+% Por que uma tarefa precisa esperar.
+%   Passo 1: a tarefa A, de maior prioridade, consome a capacidade de t_1.
+%   Passo 2: a tarefa B não cabe em t_1 (X vermelho) e é empurrada adiante.
+% Adaptado de scheduling_step1.tikz / scheduling_step2.tikz, de
+% Andrade et al. (2019): cores da paleta PuOr, rótulos em português e
+% revelação em dois passos por overlay.
+% ---------------------------------------------------------------------------
+\begin{tikzpicture}[x=5mm, y=5mm, font=\sffamily]
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Separadores de período
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node at (5, 10.5) {\Large\underline{Per\'iodo $t_1$}};
+
+  \draw[thick, color=gray] (11.5, -0.5) -- (11.5, 11);
+  \node at (17, 10.5) {\Large\underline{Per\'iodo $t_2$}};
+
+  \draw[thick, color=gray] (22.5, -0.5) -- (22.5, 11);
+  \node at (28, 10.5) {\Large\underline{Per\'iodo $t_3$}};
+
+  \draw[thick, color=gray] (33.5, -0.5) -- (33.5, 11);
+  \node at (39, 10.5) {\Large\underline{Per\'iodo $t_4$}};
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Período 1
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node(Per1JobA)[JobADark] at (5.0, 9.0) {\Large\itshape Tarefa A};
+  \node(Per1JobB)[JobBDark, visible on=<2>] at (5.0, 0.0) {\Large\itshape Tarefa B};
+
+  \path (0, 3) pic {MachineCap={lenght=10}} node(Per1Mach2) {};
+  \node[anchor=west] at (0, 4.5) {\large\itshape M\'aquina $m_2$};
+
+  \path (0, 5) pic {MachineCap={lenght=10}} node(Per1Mach1) {};
+  \node[anchor=west] at (0, 6.5) {\large\itshape M\'aquina $m_1$};
+
+  % Setas da tarefa B (tentativa inviável)
+  \draw (Per1JobB) edge[ultra thick, ->, dashed, JobBDark, visible on=<2>]
+  node[midway, anchor=west, yshift=-2.5mm] {\large 60}
+    ($(Per1Mach2) + (5, 0)$);
+
+  \draw[->,ultra thick, dashed, rounded corners=2mm, JobBDark, visible on=<2>]
+    (Per1JobB) -- (-1.0, 0.0) --
+    node[midway, anchor=west, yshift=-7mm] {\large 20}
+    ++(0.0, 5.5) --  ($(Per1Mach1) + (0, 0.5)$);
+
+  % Setas da tarefa A
+  \draw (Per1JobA) edge[ultra thick, ->, JobADark]
+    node[midway, anchor=west] {\large 100}
+    ($(Per1Mach1) + (5, 1.1)$);
+
+  \draw[->,ultra thick, rounded corners=2mm, JobADark]
+    (Per1JobA) -- ($(Per1JobA) + (5, 0)$) -|
+    ($(Per1Mach2) + (11, 0.5)$) -- ($(Per1Mach2) + (10.1, 0.5)$);
+
+  \node[JobADark] at (10.25, 7.2) {\large 30};
+
+  % Consumo da tarefa A
+  \path (0.05, 5.05) pic {Machine={lenght=10, color=JobALight, label=1}};
+  \path (0.05, 3.05) pic {Machine={lenght=3, color=JobALight, label=1}};
+
+  % X de inviabilidade
+  \draw[myred, line width=2mm, visible on=<2>]
+  (-1.25, 0.10) -- (5.27, 2.6)
+  (-1.25, 2.6) -- (5.27, 0.10);
+
+  % Redesenhado por cima do X
+  \node[JobBDark, visible on=<2>] at (5.0, 0.0) {\Large\itshape Tarefa B};
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Período 2
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node(Per2JobA)[JobADark] at (17.0, 9.0) {\Large\itshape Tarefa A};
+  \node(Per2JobB)[JobBDark, visible on=<2>] at (17.0, 0.0) {\Large\itshape Tarefa B};
+
+  \path (12, 3) pic {MachineCap={lenght=10}} node(Per2Mach2) {};
+  \node[anchor=west] at (12, 4.5) {\large\itshape M\'aquina $m_2$};
+
+  \path (12.05, 3.05) pic {Machine={lenght=2, color=JobALight, label=1}};
+  \path[visible on=<2>] (14.05, 3.05) pic {Machine={lenght=8, color=JobBLight, label=1}};
+
+  \draw (Per2JobB) edge[ultra thick, ->, solid, JobBDark, out=90, in=270, visible on=<2>]
+    node[midway, anchor=west, yshift=-2mm] {\large 80}
+    (18, 3);
+
+  \draw (Per2JobA) edge[ultra thick, ->, solid, JobADark, out=270, in=90]
+  node[midway, yshift=4mm] {\large 20}
+    (13, 5);
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Período 3
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node(Per3JobB)[JobBDark, visible on=<2>] at (28.0, 0.0) {\Large\itshape Tarefa B};
+
+  \path (23, 3) pic {MachineCap={lenght=10}} node(Per3Mach2) {};
+  \node[anchor=west] at (23, 4.5) {\large\itshape M\'aquina $m_2$};
+
+  \path (23, 5) pic {MachineCap={lenght=10}} node(Per3Mach1) {};
+  \node[anchor=west] at (23, 6.5) {\large\itshape M\'aquina $m_1$};
+
+  \path[visible on=<2>] (23.05, 5.05) pic {Machine={lenght=4, color=JobBLight, label=1}};
+  \path[visible on=<2>] (23.05, 3.05) pic {Machine={lenght=4, color=JobBLight, label=1}};
+
+  \draw[->,ultra thick, rounded corners=2mm, JobBDark, visible on=<2>]
+  (Per3JobB) --
+  (25.0, 0.0) --
+  node[midway, anchor=west, yshift=0mm] {\large 40}
+  (25.0, 3.0);
+
+  \draw[->,ultra thick, rounded corners=2mm, JobBDark, visible on=<2>]
+  (Per3JobB) --
+  node[midway, anchor=west, yshift=-4mm] {\large 40}
+  ($(Per3JobB) + (0.0, 5.5)$) -- ++(-1, 0.0);
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Período 4
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node(Per4JobB)[JobBDark, visible on=<2>] at (39.0, 0.0) {\Large\itshape Tarefa B};
+
+  \path (34, 3) pic {MachineCap={lenght=10}} node(Per4Mach2) {};
+  \node[anchor=west] at (34, 4.5) {\large\itshape M\'aquina $m_2$};
+
+  \path (34, 5) pic {MachineCap={lenght=10}} node(Per4Mach1) {};
+  \node[anchor=west] at (34, 6.5) {\large\itshape M\'aquina $m_1$};
+
+  \path[visible on=<2>] (34.05, 5.05) pic {Machine={lenght=2, color=JobBLight, label=1}};
+  \path[visible on=<2>] (34.05, 3.05) pic {Machine={lenght=2, color=JobBLight, label=1}};
+
+  \draw[->,ultra thick, rounded corners=2mm, JobBDark, visible on=<2>]
+  (Per4JobB) --
+  (35.0, 0.0) --
+  node[midway, anchor=west, yshift=0mm] {\large 20}
+  (35.0, 3.0);
+
+  \draw[->,ultra thick, rounded corners=2mm, JobBDark, visible on=<2>]
+  (Per4JobB) --
+  node[midway, anchor=west, yshift=-4mm] {\large 20}
+  ($(Per4JobB) + (0.0, 5.5)$) -- ++(-3, 0.0);
+
+\end{tikzpicture}

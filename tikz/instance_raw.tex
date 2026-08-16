@@ -1,0 +1,77 @@
+% ---------------------------------------------------------------------------
+% Instância bruta do TMDSP: cada aparição de uma tarefa sob uma máquina é uma
+% sessão. Várias sessões podem ocorrer na mesma máquina e período.
+% Adaptado de instance_raw.tikz, de Andrade et al. (2019): cores da paleta
+% PuOr e rótulos em português.
+% ---------------------------------------------------------------------------
+\begin{tikzpicture}[x=5mm, y=5mm, font=\sffamily]
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Separadores
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \draw[thick, dash pattern=on 6pt off 6pt, color=gray]
+  (-5, 3.25) -- (39.5, 3.25);
+
+  \node at (7.5, 8) {\Large\underline{Per\'iodo $t_1$}};
+
+  \draw[thick, color=gray] (13.5, -0.5) -- (13.5, 7.5);
+  \node at (20.5, 8) {\Large\underline{Per\'iodo $t_2$}};
+
+  \draw[thick, color=gray] (26.5, -0.5) -- (26.5, 7.5);
+  \node at (33, 8) {\Large\underline{Per\'iodo $t_3$}};
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Tarefa A
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node(TopJob)[anchor=east] at (-2.5, 5.0) {\Large\itshape Tarefa A};
+
+  \node(TopMach)[anchor=east] at (0.0, 5.5) {\large\itshape $m_1$};
+  \node[anchor=east] at (0.0, 4.5) {\large\itshape $m_2$};
+
+  %% Cabeçalho
+  \node(JobMachHeader) [anchor=east] at (1.0, 8.0) {\Large Tarefas/M\'aquinas};
+  \path (JobMachHeader)
+      edge[ultra thick, |-|, out=270, in=90] (TopJob);
+  \path (JobMachHeader)
+      edge[ultra thick, -|, out=270, in=90] (TopMach);
+
+  % Período 1
+  \path (0, 5) pic {Machine={lenght=6, color=MaqUm, label=1}};
+  \path (6, 4) pic {Machine={lenght=3, color=MaqDois, label=2}};
+  \path (9, 5) pic {Machine={lenght=4, color=MaqUm, label=1}};
+
+  % Período 2
+  \path (19, 4) pic {Machine={lenght=6, color=MaqDois, label=2}};
+
+  % Período 3
+  \foreach \i in {1,...,2}{%
+    \path (26 + \i, 5) pic {Machine={lenght=1, color=MaqUm, label=1}};
+  }
+
+  \foreach \i in {5,...,12}{%
+    \path (26 + \i, 5) pic {Machine={lenght=1, color=MaqUm, label=1}};
+  }
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% Tarefa B
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \node[anchor=east] at (-2.5, 1.0) {\Large\itshape Tarefa B};
+
+  \node[anchor=east] at (0.0, 1.5) {\large\itshape $m_1$};
+  \node[anchor=east] at (0.0, 0.5) {\large\itshape $m_2$};
+
+  % Período 1
+  \path (1, 1) pic {Machine={lenght=2, color=MaqUm, label=1}};
+  \path (5, 0) pic {Machine={lenght=6, color=MaqDois, label=2}};
+
+  % Período 2
+  \path (14, 0) pic {Machine={lenght=8, color=MaqDois, label=2}};
+
+  % Período 3
+  \path (28, 1) pic {Machine={lenght=4, color=MaqUm, label=1}};
+  \path (34, 0) pic {Machine={lenght=4, color=MaqDois, label=2}};
+
+\end{tikzpicture}
