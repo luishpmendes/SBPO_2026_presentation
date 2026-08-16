@@ -1,68 +1,117 @@
 % ---------------------------------------------------------------------------
 % Motivação FOTA: o instante de início da transferência muda tudo.
-% Ilustração original, inspirada no cenário descrito por Andrade et al. (2019).
+% Ilustração original, inspirada na Fig. 1 de Andrade et al. (2019).
+%
+% Cada barra é a FRAÇÃO DA ATUALIZAÇÃO baixada naquele dia; a altura útil da
+% faixa de um cenário vale 100%. Assim os dois cenários somam o mesmo total e
+% as quatro parcelas são diretamente comparáveis. Para reajustar o contraste,
+% basta mexer nas quatro frações abaixo.
+%
+% Os `pics` do veículo são desenhados em cm (e não em unidades da figura) para
+% não se deformarem quando a razão y/x muda.
 % ---------------------------------------------------------------------------
 \begin{tikzpicture}[
-  x=1.30cm, y=1.00cm,
+  x=1.25cm, y=1.78cm,
   font=\footnotesize,
-  cell/.style={draw=black!40, line width=0.4pt},
+  cell/.style={draw=black!35, line width=0.4pt},
   data/.style={fill=mydarkblue1, draw=mydarkblue1!55!black, line width=0.4pt},
-  verdict/.style={font=\scriptsize\bfseries, anchor=west, align=left},
+  daychip/.style={draw, rounded corners=1.5pt, line width=0.5pt,
+                  minimum width=0.82cm, minimum height=0.32cm,
+                  inner sep=1pt, font=\footnotesize},
+  rowlabel/.style={anchor=east, align=right, font=\footnotesize},
+  verdict/.style={anchor=west, align=left, font=\footnotesize\bfseries},
 ]
 
-% --- pic: carro estilizado (veículo conectado presente na rede) ------------
+% --- parâmetros -------------------------------------------------------------
+\def\rowh{1.00}        % altura útil da faixa de um cenário = 100% da atualização
+\def\barw{0.76}        % largura da barra, em frações da largura de um dia
+\def\ya{1.95}          % base da faixa do cenário (a)
+\def\yb{0.62}          % base da faixa do cenário (b)
+
+\def\fracAseg{0.50}    % (a) metade na segunda ...
+\def\fracAqua{0.50}    %     ... e metade na quarta -- ambas no pico
+\def\fracBsex{0.80}    % (b) quase tudo na sexta, fora do pico ...
+\def\fracBseg{0.20}    %     ... e só o resto na segunda
+
+% --- barra de dados: #1 dia, #2 base da faixa, #3 fração da atualização -----
+\newcommand{\dlbar}[3]{%
+  \fill[data] (#1+0.5-\barw/2, #2) rectangle ++(\barw, #3*\rowh);
+}
+
+% --- faixa de um cenário: #1 base ------------------------------------------
+\newcommand{\dayrow}[1]{%
+  \draw[cell] (0,#1) rectangle (8,#1+\rowh);
+  \foreach \i in {1,...,7} { \draw[cell] (\i,#1) -- (\i,#1+\rowh); }
+}
+
+% --- pics: veículo conectado (carro + arcos de sinal) -----------------------
 \tikzset{
   carro/.pic={
-    \fill[mydarkblue1!80] (-0.26,0.02) -- (-0.26,0.13) -- (-0.12,0.13)
-      -- (-0.03,0.25) -- (0.14,0.25) -- (0.17,0.13) -- (0.26,0.13)
-      -- (0.26,0.02) -- cycle;
-    \fill[mydarkblue1!80] (-0.14,0.0) circle (0.055);
-    \fill[mydarkblue1!80] (0.14,0.0) circle (0.055);
+    \fill[mydarkblue1!85] (-0.33cm,0.02cm) -- (-0.33cm,0.17cm)
+      -- (-0.15cm,0.17cm) -- (-0.04cm,0.32cm) -- (0.18cm,0.32cm)
+      -- (0.21cm,0.17cm) -- (0.33cm,0.17cm) -- (0.33cm,0.02cm) -- cycle;
+    \fill[mydarkblue1!85] (-0.18cm,0cm) circle (0.07cm);
+    \fill[mydarkblue1!85] (0.18cm,0cm) circle (0.07cm);
+  },
+  sinal/.pic={
+    \draw[mydarkblue1!85, line width=0.5pt] (-0.12cm,0cm) arc (180:0:0.12cm);
+    \draw[mydarkblue1!85, line width=0.5pt] (-0.23cm,0cm) arc (180:0:0.23cm);
+    \fill[mydarkblue1!85] (0cm,-0.04cm) circle (0.035cm);
   }
 }
 
 % ===========================================================================
 % Faixa de pico da rede (segunda a quinta), atrás de tudo
 % ===========================================================================
-\fill[mylightorange1, opacity=0.50] (3,-1.02) rectangle (7,2.16);
-\draw[mydarkorange1, line width=0.9pt] (3,2.16) -- (7,2.16);
-\node[mydarkorange1, font=\scriptsize\bfseries, anchor=south] at (5,2.22)
+\fill[mylightorange1, opacity=0.45] (3,\yb-0.14) rectangle (7,3.44);
+
+% Colchete dos períodos de pico, no estilo da Fig. 1 do artigo
+\draw[mydarkorange1, line width=0.8pt]
+  (3.10,3.98) -- (6.90,3.98)
+  (3.10,3.98) -- (3.10,3.90)
+  (6.90,3.98) -- (6.90,3.90);
+\node[mydarkorange1, font=\footnotesize\bfseries, anchor=south] at (5,4.02)
   {per\'iodos de pico da rede};
 
 % --- dias -------------------------------------------------------------------
-\foreach \i/\d in {0/Sex, 1/S\'ab, 2/Dom, 3/Seg, 4/Ter, 5/Qua, 6/Qui, 7/Sex} {
-  \node[anchor=south, font=\scriptsize] at (\i+0.5, 1.66) {\d};
+\foreach \i/\d in {0/Sex, 1/S\'ab, 2/Dom, 7/Sex} {
+  \node[daychip, fill=mygray!35, draw=black!45] at (\i+0.5, 3.68) {\d};
+}
+\foreach \i/\d in {3/Seg, 4/Ter, 5/Qua, 6/Qui} {
+  \node[daychip, fill=mylightorange1, draw=mydarkorange1,
+        text=mydarkorange1!70!black] at (\i+0.5, 3.68) {\d};
 }
 
 % --- disponibilidade do veículo (a mesma nos dois cenários) ----------------
-\node[anchor=east, font=\scriptsize, text=mydarkblue1!80!black]
-  at (-0.14, 1.34) {ve\'iculo na rede};
-\foreach \i in {0,3,5,7} { \path (\i+0.5,1.22) pic[scale=1.0] {carro}; }
+\node[rowlabel, text=mydarkblue1!80!black] at (-0.16, 3.19) {ve\'iculo na rede};
+\foreach \i in {0,3,5,7} {
+  \path (\i+0.5,3.10) pic {carro};
+  \path (\i+0.5,3.30) pic {sinal};
+}
 
 % ===========================================================================
 % Cenário (a): início na segunda-feira -- tudo cai no pico
 % ===========================================================================
-\node[anchor=east, align=right, font=\scriptsize]
-  at (-0.14, 0.48) {\textbf{(a)} in\'icio\\na segunda};
-\foreach \i in {0,...,7} { \draw[cell] (\i,0.10) rectangle (\i+1,0.86); }
-\fill[data] (3.08,0.18) rectangle (3.92,0.78);
-\fill[data] (5.08,0.18) rectangle (5.92,0.78);
-\node[verdict, mydarkorange1] at (8.14,0.48)
-  {toda a transfer\^encia\\cai no pico};
+\node[rowlabel] at (-0.16, \ya+\rowh/2) {\textbf{(a)} in\'icio\\na segunda};
+\dayrow{\ya}
+\dlbar{3}{\ya}{\fracAseg}
+\dlbar{5}{\ya}{\fracAqua}
+\node[verdict, mydarkorange1] at (8.16, \ya+\rowh/2)
+  {toda a\\transfer\^encia\\cai no pico};
 
 % ===========================================================================
 % Cenário (b): início na sexta-feira -- quase tudo fora do pico
 % ===========================================================================
-\node[anchor=east, align=right, font=\scriptsize]
-  at (-0.14, -0.52) {\textbf{(b)} in\'icio\\na sexta};
-\foreach \i in {0,...,7} { \draw[cell] (\i,-0.90) rectangle (\i+1,-0.14); }
-\fill[data] (0.08,-0.82) rectangle (0.92,-0.22);
-\fill[data] (3.08,-0.82) rectangle (3.92,-0.56);
-\node[verdict, mygreen!55!black] at (8.14,-0.52)
+\node[rowlabel] at (-0.16, \yb+\rowh/2) {\textbf{(b)} in\'icio\\na sexta};
+\dayrow{\yb}
+\dlbar{0}{\yb}{\fracBsex}
+\dlbar{3}{\yb}{\fracBseg}
+\node[verdict, mygreen!55!black] at (8.16, \yb+\rowh/2)
   {quase tudo\\fora do pico};
 
 % --- legenda ---------------------------------------------------------------
-\fill[data] (0.06,-1.52) rectangle (0.52,-1.30);
-\node[anchor=west, font=\scriptsize] at (0.62,-1.41) {dados transferidos};
+\fill[data] (0.06,0.06) rectangle (0.50,0.24);
+\node[anchor=west, font=\footnotesize] at (0.60,0.15)
+  {dados transferidos (fra\c{c}\~ao da atualiza\c{c}\~ao)};
 
 \end{tikzpicture}
