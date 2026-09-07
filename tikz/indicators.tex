@@ -1,0 +1,98 @@
+% ---------------------------------------------------------------------------
+% Como se mede a qualidade de uma fronteira: NIGD+ e HVR.
+%
+% Os pontos e a semântica são os mesmos das figuras de indicadores da
+% apresentação do MIC 2026 (lá feitas em pgfplots); aqui são redesenhados em
+% TikZ puro, na paleta PuOr, para não carregar pgfplots nesta apresentação.
+%
+%   Y^ref (laranja) : fronteira de referência (todas as não dominadas).
+%   S     (azul)    : fronteira obtida por um algoritmo.
+%   y^ref (verde)   : ponto de referência de pior caso, usado para normalizar.
+%
+% Definições conforme a implementação em motmdsp/src/exec:
+%   IGD+(A) = média, sobre z em Y^ref, de min_{a in A} ||(a - z)^+||
+%   NIGD+   = IGD+(S) / IGD+({y^ref})
+%   HVR     = HV(S, y^ref) / HV(Y^ref, y^ref)
+%
+% Define dois comandos, cada um uma tikzpicture completa:
+%   \PainelNIGD   e   \PainelHVR
+% ---------------------------------------------------------------------------
+
+% Fronteira obtida S (4 pontos) e fronteira de referência Y^ref (7 pontos).
+\def\FronteiraObtida{{(2,7)}, {(4,4)}, {(6,3)}, {(7,2)}}
+\def\FronteiraRef{{(1,8)}, {(1.5,5.88)}, {(2.19,4.28)}, {(3.08,3.08)},
+                  {(4.28,2.19)}, {(5.88,1.5)}, {(8,1)}}
+
+% Eixos comuns aos dois painéis.
+\newcommand{\PainelEixos}{%
+  \draw[-Stealth, thick] (0,0) -- (10.4,0)
+    node[below=2pt, font=\scriptsize, anchor=north east] {$C_{\max}$};
+  \draw[-Stealth, thick] (0,0) -- (0,10.4)
+    node[right=1pt, font=\scriptsize, anchor=south west] {$\sum_{j} C_{j}$};
+}
+
+% Marcadores das duas fronteiras e do ponto de pior caso.
+\newcommand{\PainelPontos}{%
+  \foreach \p in \FronteiraRef {\fill[mydarkorange1] \p circle (6pt);}
+  \foreach \p in \FronteiraObtida {%
+    \fill[mydarkblue1] \p ++(-3.6pt,-3.6pt) rectangle ++(7.2pt,7.2pt);}
+  \node[star, star points=5, star point ratio=2.2, draw=mygreen, fill=mygreen,
+        inner sep=2.4pt] at (9,9) {};
+  \node[mygreen, font=\scriptsize, anchor=south] at (9,9.6)
+    {$\mathbf{y}^{\mathrm{ref}}$};
+}
+
+% Legenda comum aos dois painéis, usada uma única vez no slide: mantê-la
+% fora das figuras deixa cada painel quadrado e, portanto, maior.
+\newcommand{\LegendaIndicadores}{%
+  \tikz[baseline=-0.5ex]{\fill[mydarkorange1] (0,0) circle (0.42ex);}\,%
+  fronteira de refer\^encia $\mathcal{Y}^{\mathrm{ref}}$
+  \qquad
+  \tikz[baseline=-0.5ex]{\fill[mydarkblue1] (-0.42ex,-0.42ex)
+    rectangle (0.42ex,0.42ex);}\,%
+  fronteira obtida $S$
+  \qquad
+  \tikz[baseline=-0.5ex]{\node[star, star points=5, star point ratio=2.2,
+    draw=mygreen, fill=mygreen, inner sep=0.32ex] at (0,0) {};}\,%
+  pior caso $\mathbf{y}^{\mathrm{ref}}$%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Painel 1: NIGD+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\PainelNIGD}{%
+\begin{tikzpicture}[x=5.4mm, y=5.4mm, font=\sffamily]
+  \PainelEixos
+
+  % Normalização: distâncias de cada ponto de referência ao ponto de pior caso.
+  \foreach \p in \FronteiraRef {\draw[mygreen, dotted, thick] \p -- (9,9);}
+
+  % Para cada ponto da fronteira de referência, o ponto obtido mais próximo.
+  \draw[mydarkblue1, dashed, very thick]
+    (1,8)      -- (2,7)   (1.5,5.88) -- (2,7)
+    (2.19,4.28)-- (4,4)   (3.08,3.08)-- (4,4)   (4.28,2.19) -- (4,4)
+    (5.88,1.5) -- (7,2)   (8,1)      -- (7,2);
+
+  \PainelPontos
+\end{tikzpicture}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Painel 2: HVR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\PainelHVR}{%
+\begin{tikzpicture}[x=5.4mm, y=5.4mm, font=\sffamily]
+  \PainelEixos
+
+  % Região dominada pela fronteira de referência, limitada por y^ref.
+  \draw[mydarkorange1, very thick, dashed, fill=mylightorange1, fill opacity=0.30]
+    (1,9) -- (1,8) -- (1.5,8) -- (1.5,5.88) -- (2.19,5.88) -- (2.19,4.28)
+    -- (3.08,4.28) -- (3.08,3.08) -- (4.28,3.08) -- (4.28,2.19)
+    -- (5.88,2.19) -- (5.88,1.5) -- (8,1.5) -- (8,1) -- (9,1) -- (9,9) -- cycle;
+
+  % Região dominada pela fronteira obtida, limitada por y^ref.
+  \draw[mydarkblue1, very thick, fill=mylightblue1, fill opacity=0.55]
+    (2,9) -- (2,7) -- (4,7) -- (4,4) -- (6,4) -- (6,3) -- (7,3) -- (7,2)
+    -- (9,2) -- (9,9) -- cycle;
+
+  \PainelPontos
+\end{tikzpicture}}

@@ -18,6 +18,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[brazil]{babel}   % hifenização e termos em português
 
+\usepackage{array}
 \usepackage{booktabs}
 \usepackage{palatino}
 \usepackage[default]{opensans}
@@ -60,6 +61,10 @@
 % Estilos das figuras adaptadas de Andrade et al. (2019).
 % Precisa vir depois das cores acima, das quais depende.
 \input{tikz/andrade_styles.tex}
+
+% Painéis \PainelNIGD e \PainelHVR (slide dos indicadores).
+% Também dependem das cores acima.
+\input{tikz/indicators.tex}
 
 %----------------------------------------------------------------------------------------
 %	COMANDOS
@@ -155,40 +160,47 @@ Um ve\'iculo conectado:
 \begin{frame}
 \frametitle{Do FOTA ao TMDSP}
 
-{\small \textbf{Tarefas} $J$ (ve\'iculos), \textbf{m\'aquinas} $M$ (setores) e
-\textbf{per\'iodos} $T$. Se a tarefa $j$ for atendida pela m\'aquina $m$ no
-per\'iodo $t$, consome $q_{jmt}$ de capacidade:}
+{\small O FOTA \'e modelado pelo \emph{Time- and Machine-Dependent Scheduling
+Problem} (TMDSP), de Andrade et al.\ (2019):}
 
 \smallskip
 
-\begin{center}
-\resizebox{0.88\textwidth}{!}{\input{tikz/instance_preprocessed.tex}}
-\end{center}
-
-\vfill
+% Sobrescreve, s\'o neste frame, o \normalsize que o pre\^ambulo fixa
+% para o corpo das listas.
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
 
 \begin{columns}[T,onlytextwidth]
-\column{0.55\textwidth}
-{\small
-\textbf{Restri\c{c}\~oes:} capacidade $c_{mt}$ de cada m\'aquina, vari\'avel no
-tempo; limite global $r_{\max}$ por per\'iodo; no m\'aximo $k_{\max}$ tarefas
-ativas; demanda $d_{j}$ atendida ao longo de v\'arios per\'iodos.}
+\column{0.48\textwidth}
+\footnotesize
+\textbf{Dados}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item<1-> $J$ --- \textbf{tarefas}: ve\'iculos, com demanda $d_{j}$.
+\item<1-> $M$ --- \textbf{m\'aquinas}: setores da rede.
+\item<1-> $T$ --- \textbf{per\'iodos} do horizonte.
+\item<2-> $c_{mt}$, $\eta_{mt}$ --- capacidade e taxa da m\'aquina,
+      \alert{vari\'aveis no tempo}.
+\item<3-> $q_{jmt}$ --- capacidade que $j$ consome em $m$ no per\'iodo $t$;
+      \alert{s\'o existe} se o ve\'iculo estiver sob aquele setor ali.
+\end{itemize}
 
-\column{0.43\textwidth}
-{\small
-\textbf{Objetivo original} (mono-objetivo):
-\[
-\min \sum_{j \in J} C_{j}
-\]
-\vspace{-0.9em}
-
-tempo total de conclus\~ao.}
+\column{0.48\textwidth}
+\footnotesize
+\textbf{Regras}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item<4-> Cada tarefa usa \textbf{uma m\'aquina por per\'iodo}, no m\'aximo;
+\item<4-> \'e \textbf{preempt\'avel entre per\'iodos} e fica ativa at\'e
+      atender $d_{j}$;
+\item<4-> $C_{j}$ \'e o \textbf{\'ultimo per\'iodo ativo} de $j$.
+\item<5-> Por per\'iodo: $r_{\max}$ limita a vaz\~ao total da rede e
+      $k_{\max}$, o n\'umero de tarefas ativas.
+\end{itemize}
 \end{columns}
 
-\vspace{0.2em}
+\vspace{0.1em}
 
-{\raggedleft\scriptsize\color{black!55}As cores identificam a m\'aquina.
-Adaptado de Andrade et al. (2019)\par}
+\onslide<6->{\takeaway{Objetivo original, mono-objetivo:
+$\displaystyle \min \sum_{j \in J} C_{j}$ --- o tempo total de conclus\~ao.}}
+
 \end{frame}
 
 %----------------------------------------------------------------------------------------
@@ -201,9 +213,9 @@ Adaptado de Andrade et al. (2019)\par}
 \column{0.47\textwidth}
 
 \small
-Andrade et al. (2019) observaram que a correla\c{c}\~ao entre os dois
-crit\'erios \'e \textbf{fraca}: um escalonamento \'otimo em $\sum_{j} C_{j}$
-pode deixar algumas tarefas terminando \textbf{muito depois} das demais.
+A correla\c{c}\~ao entre os dois crit\'erios \'e \textbf{fraca}: um
+escalonamento \'otimo em $\sum_{j} C_{j}$ pode deixar algumas tarefas
+terminando \textbf{muito depois} das demais.
 
 \medskip
 
@@ -221,6 +233,10 @@ $\displaystyle \min\ C_{\max} = \max_{j \in J} C_{j}$
 $\displaystyle \min \sum_{j \in J} C_{j}$
 \;\; (tempo total de conclus\~ao)
 \end{center}
+
+\smallskip
+
+{\scriptsize\color{black!55} Observado por Andrade et al.\ (2019).}
 
 \column{0.49\textwidth}
 \centering
@@ -243,27 +259,82 @@ $\displaystyle \min \sum_{j \in J} C_{j}$
 \end{frame}
 
 %----------------------------------------------------------------------------------------
+% 5. FORMULAÇÃO DO MOTMDSP
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{MOTMDSP: formula\c{c}\~ao}
+
+\begin{center}
+{\large $\displaystyle \min\ C_{\max}
+ \qquad\text{e}\qquad
+ \min \sum_{j \in J} C_{j}$}
+\end{center}
+
+{\small sujeito a, para todo per\'iodo $t$ (com $\hat{t} = t \bmod |T|$):}
+
+\smallskip
+
+{\footnotesize
+\begin{tabular}{@{} r @{\;\;} l @{}}
+$\displaystyle\sum_{m \in M} x_{jmt} \le 1$
+  & uma m\'aquina por per\'iodo, para cada tarefa $j$ \\[0.85em]
+$\displaystyle\sum_{j \in J} y_{jmt} \le c_{m\hat{t}}$
+  & capacidade da m\'aquina $m$ \\[0.85em]
+$\displaystyle\sum_{j \in J}\sum_{m \in M} \eta_{m\hat{t}}\, y_{jmt} \le r_{\max}$
+  & vaz\~ao total da rede \\[0.85em]
+$\displaystyle\sum_{j \in J} a_{jt} \le k_{\max}$
+  & tarefas ativas simultaneamente \\[0.85em]
+$\displaystyle\sum_{m \in M}\sum_{t} \eta_{m\hat{t}}\, y_{jmt} = d_{j}$
+  & demanda da tarefa $j$ atendida \\[0.85em]
+$C_{j} \ge t\,a_{jt}, \quad C_{\max} \ge C_{j}$
+  & tempos de conclus\~ao \\
+\end{tabular}}
+
+\medskip
+
+\srcnote{$x_{jmt}$: atribui\c{c}\~ao; $y_{jmt}$: capacidade usada;
+$a_{jt}$: tarefa ativa. As restri\c{c}\~oes de in\'icio, propaga\c{c}\~ao de
+atividade e t\'ermino seguem Andrade et al. (2019).}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
 % 5. CONTRIBUIÇÕES
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{Contribui\c{c}\~oes deste trabalho}
+\frametitle{O que vem da literatura, o que \'e deste trabalho}
 
-\begin{enumerate}\setlength{\itemsep}{9pt}
-\item \textbf{Formula\c{c}\~ao do MOTMDSP}: extens\~ao biobjetivo do TMDSP.
-      At\'e onde sabemos, \'e a primeira formula\c{c}\~ao multiobjetivo desse
-      problema.
+\begin{center}
+\small
+\begin{tabular}{@{}
+  >{\raggedright\arraybackslash}p{0.42\textwidth}
+  >{\raggedright\arraybackslash}p{0.50\textwidth} @{}}
+\toprule
+\textbf{Da literatura} & \textbf{Deste trabalho} \\
+\midrule
+TMDSP e inst\^ancias reais de FOTA \newline
+{\scriptsize Andrade et al. (2019)}
+  & \textbf{MOTMDSP}: extens\~ao biobjetivo. At\'e onde sabemos, a
+    \textbf{primeira} formula\c{c}\~ao multiobjetivo do problema \\
+\addlinespace
+Decodificador mono-objetivo \newline
+{\scriptsize Andrade et al. (2019)}
+  & \textbf{Estendido} para avaliar os dois objetivos:
+    $\mathbf{F} = (C_{\max},\ \sum_{j} C_{j})$ \\
+\addlinespace
+\alg{NS-BRKGA} \newline
+{\scriptsize Mendes et al. (2022); Pauleti Mendes et al. (2023)}
+  & \textbf{Primeira aplica\c{c}\~ao} ao MOTMDSP, com o motor evolutivo
+    \textbf{inalterado} \\
+\addlinespace
+\alg{NSGA-II}, \alg{NSPSO}, \alg{MOEA/D-DE}, \alg{MHACO}, \alg{IHS}
+{\scriptsize (PaGMO2)}
+  & \textbf{Avalia\c{c}\~ao} em $96$ inst\^ancias de larga escala, com o
+    \textbf{mesmo decodificador} para todos \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\item \textbf{Decodificador especializado}, projetado neste trabalho, que
-      constr\'oi escalonamentos vi\'aveis a partir das prioridades do cromossomo.
-
-\item \textbf{Avalia\c{c}\~ao experimental} em $96$ inst\^ancias realistas de
-      larga escala, contra cinco algoritmos evolutivos multiobjetivo.
-\end{enumerate}
-
-\takeaway{O \alg{NS-BRKGA} \emph{n\~ao} \'e proposto aqui: ele j\'a existe na
-literatura e \'e aplicado \textbf{sem modifica\c{c}\~oes} no motor evolutivo.}
-
-\srcnote{\alg{NS-BRKGA} --- Mendes et al. (2022); Pauleti Mendes et al. (2023)}
 \end{frame}
 
 %========================================================================================
@@ -313,9 +384,9 @@ da chave $\Rightarrow$ ordem de prioridade.
 
 \bigskip
 
-Pequenas perturba\c{c}\~oes nas chaves causam pequenas mudan\c{c}as na ordem, o
-que permite explorar o espa\c{c}o de permuta\c{c}\~oes \textbf{sem operadores
-especializados}.
+\takeaway{Pequenas perturba\c{c}\~oes nas chaves causam pequenas mudan\c{c}as na
+ordem: o espa\c{c}o de permuta\c{c}\~oes \'e explorado \textbf{sem operadores
+especializados}.}
 
 \end{frame}
 
@@ -340,7 +411,8 @@ devolve $\mathbf{F} = (C_{\max},\ \sum_{j} C_{j})$.}
 \vspace{0.2em}
 
 {\raggedleft\scriptsize\color{black!55}As cores identificam a tarefa.
-Adaptado de Andrade et al. (2019)\par}
+Decodificador de Andrade et al. (2019), aqui estendido para devolver os
+\textbf{dois} objetivos\par}
 
 \end{frame}
 
@@ -359,9 +431,9 @@ Adaptado de Andrade et al. (2019)\par}
 {\small
 \only<1>{A tarefa A, de maior prioridade, consome a capacidade dispon\'ivel
 em $t_1$.}%
-\only<2>{A tarefa B precisaria de $20$ e $60$ em $t_1$, mas a capacidade j\'a
-foi comprometida: a aloca\c{c}\~ao \'e \alert{invi\'avel} e a tarefa s\'o
-come\c{c}a em $t_2$.}}
+\only<2>{Sob $c_{mt}$, $r_{\max}$ e $k_{\max}$ \emph{simultaneamente}, n\~ao
+resta aloca\c{c}\~ao vi\'avel para a tarefa B em $t_1$: ela \'e
+\alert{empurrada} e s\'o come\c{c}a em $t_2$.}}
 
 \vspace{0.2em}
 
@@ -383,7 +455,7 @@ l\'ogica do MOTMDSP est\'a no decodificador.}
 \vfill
 
 \begin{center}
-\scalebox{0.45}{
+\scalebox{0.43}{
 \begin{tikzpicture}
 % --- População Pt ---
 \node [fill=mydarkblue1, text=white, text centered, outer sep=0, text width=88,
@@ -469,31 +541,69 @@ popula\c{c}\~oes com migra\c{c}\~ao, \emph{implicit path-relinking},
 \bottomrule
 \end{tabular}
 
-\medskip
-
-{\footnotesize Fronteira de refer\^encia por inst\^ancia: todas as solu\c{c}\~oes
-n\~ao dominadas de \textbf{todos} os algoritmos e execu\c{c}\~oes.}
-
 \column{0.44\textwidth}
 \small
-\textbf{Indicadores}
+\textbf{Fronteira de refer\^encia}
 
 \smallskip
 
 \begin{itemize}\setlength{\itemsep}{6pt}
-\item $\NIGDplus$ ($\downarrow$): dist\^ancia m\'edia da fronteira de
-      refer\^encia \`a fronteira obtida. Mede \textbf{converg\^encia}.
-\item $\HVR$ ($\uparrow$): fra\c{c}\~ao do volume dominado pela fronteira de
-      refer\^encia que a fronteira obtida cobre. Mede
-      \textbf{converg\^encia e diversidade}.
+\item Uma por inst\^ancia: todas as solu\c{c}\~oes n\~ao dominadas de
+      \textbf{todos} os algoritmos e execu\c{c}\~oes.
+\item Filtrada por \emph{non-dominated sorting} $+$ \emph{crowding distance}
+      para at\'e $800$ pontos.
+\item Cada fronteira obtida \'e podada a at\'e $500$ pontos.
 \end{itemize}
-
-\medskip
 
 \takeaway{Todos os m\'etodos usam o \textbf{mesmo decodificador}: muda apenas o
 motor de busca.}
 
 \end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% INDICADORES: COMO LER OS RESULTADOS
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Como medimos a qualidade de uma fronteira}
+
+\begin{columns}[T,onlytextwidth]
+\column{0.49\textwidth}
+\centering
+{\small\textbf{$\NIGDplus$ ($\downarrow$): converg\^encia}}
+
+\smallskip
+
+\resizebox{!}{0.455\textheight}{\PainelNIGD}
+
+\smallskip
+
+{\footnotesize Dist\^ancia m\'edia de cada ponto da refer\^encia ao obtido
+mais pr\'oximo, normalizada por $\mathbf{y}^{\mathrm{ref}}$.}
+
+\column{0.49\textwidth}
+\centering
+{\small\textbf{$\HVR$ ($\uparrow$): converg\^encia $+$ diversidade}}
+
+\smallskip
+
+\resizebox{!}{0.455\textheight}{\PainelHVR}
+
+\smallskip
+
+{\footnotesize Fra\c{c}\~ao da \'area dominada pela refer\^encia (laranja) que
+a fronteira obtida (azul) cobre.}
+\end{columns}
+
+\vspace{-0.1em}
+
+\begin{center}\footnotesize\LegendaIndicadores\end{center}
+
+\vspace{-0.4em}
+
+\takeaway{$\NIGDplus$ perto de $\mathbf{0}$ \'e bom; $\HVR$ perto de
+$\mathbf{1}$ \'e bom. Ambos ficam em $[0,\,1]$.}
 
 \end{frame}
 
@@ -526,9 +636,9 @@ demais                    & 0,00009 \\
 
 \medskip
 
-O $\HVR$ satura para todos ($\ge 0{,}9998$) e discrimina pouco. O
-\alg{NS-BRKGA} tamb\'em tem a maior m\'edia de $\HVR$ e o menor
-desvio-padr\~ao nos dois indicadores.}
+Todos superam $\HVR \ge 0{,}9998$, de modo que \'e o $\NIGDplus$ que separa os
+m\'etodos neste regime. O \alg{NS-BRKGA} tamb\'em tem a maior m\'edia de $\HVR$
+e o menor desvio-padr\~ao nos dois indicadores.}
 \end{columns}
 
 \end{frame}
@@ -594,31 +704,6 @@ Neste subconjunto o \alg{NS-BRKGA} tamb\'em tem o melhor $\HVR$ m\'edio
 
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-% 12. LEITURA DOS RESULTADOS
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Como ler esses resultados}
-
-\begin{itemize}\setlength{\itemsep}{10pt}
-\item As diferen\c{c}as entre os m\'etodos concentram-se entre a
-      \textbf{terceira e a quinta casa decimal} dos indicadores, e as
-      distribui\c{c}\~oes por execu\c{c}\~ao \textbf{se sobrep\~oem}.
-
-\item \textbf{N\~ao} realizamos testes de hip\'otese: os resultados devem ser
-      lidos como \textbf{desempenho emp\'irico observado}, e n\~ao como
-      superioridade estatisticamente significativa.
-
-\item Nenhum algoritmo apresenta degrada\c{c}\~ao \`a medida que o n\'umero de
-      tarefas ou de m\'aquinas cresce, sob o or\c{c}amento fixo de tempo.
-
-\item Os par\^ametros dos algoritmos de refer\^encia s\~ao os padr\~oes do
-      PaGMO2; os do \alg{NS-BRKGA} v\^em da literatura de BRKGA. As origens
-      diferem, ent\~ao \textbf{n\~ao afirmamos uniformidade de calibra\c{c}\~ao}.
-\end{itemize}
-
-\end{frame}
-
 %========================================================================================
 \section{Conclusão}
 
@@ -628,18 +713,21 @@ Neste subconjunto o \alg{NS-BRKGA} tamb\'em tem o melhor $\HVR$ m\'edio
 \begin{frame}
 \frametitle{Conclus\~oes}
 
-\begin{itemize}\setlength{\itemsep}{10pt}
+\begin{itemize}\setlength{\itemsep}{6pt}
 \item Formulamos o \textbf{MOTMDSP}, extens\~ao biobjetivo do TMDSP que trata
       explicitamente o compromisso entre \emph{makespan} e tempo total de
       conclus\~ao.
 
-\item Projetamos um \textbf{decodificador} que transforma prioridades em
-      escalonamentos vi\'aveis e permitiu aplicar o \alg{NS-BRKGA} ---
-      e tamb\'em os cinco algoritmos de refer\^encia --- ao problema.
+\item \textbf{Estendemos o decodificador} de Andrade et al. (2019) para os dois
+      objetivos, o que permitiu aplicar ao problema tanto o \alg{NS-BRKGA}
+      quanto os cinco algoritmos de refer\^encia.
 
 \item Em $96$ inst\^ancias de larga escala, o \alg{NS-BRKGA} obteve as
       \textbf{melhores m\'edias} de $\HVR$ e $\NIGDplus$, com vantagem mais
       n\'itida nas inst\^ancias \texttt{rare}.
+
+\item O desempenho \textbf{se mant\'em} \`a medida que o n\'umero de tarefas ou
+      de m\'aquinas cresce, sob o mesmo or\c{c}amento de tempo.
 
 \item \textbf{Uso pr\'atico:} em vez de um \'unico escalonamento, o operador
       recebe um \textbf{conjunto de compromissos} entre terminar a campanha
@@ -677,32 +765,6 @@ Neste subconjunto o \alg{NS-BRKGA} tamb\'em tem o melhor $\HVR$ m\'edio
 
 \appendix
 \section{Material de apoio}
-
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Apoio: pr\'e-processamento da inst\^ancia}
-
-{\small Cada apari\c{c}\~ao de uma tarefa sob uma m\'aquina \'e uma
-\emph{sess\~ao}; sess\~oes na mesma m\'aquina e per\'iodo s\~ao agregadas em um
-\'unico requisito $q_{jmt}$.}
-
-\smallskip
-
-\begin{center}
-\resizebox{0.80\textwidth}{!}{\input{tikz/instance_raw.tex}}
-\end{center}
-
-\vspace{-0.3em}
-
-\begin{center}
-\resizebox{0.80\textwidth}{!}{\input{tikz/instance_preprocessed.tex}}
-\end{center}
-
-\vspace{0.2em}
-
-{\raggedleft\scriptsize\color{black!55}Adaptado de Andrade et al. (2019)\par}
-
-\end{frame}
 
 %----------------------------------------------------------------------------------------
 \begin{frame}
@@ -746,8 +808,8 @@ $1{,}0000$ nesta precis\~ao.
 
 \medskip
 
-O indicador est\'a pr\'oximo da satura\c{c}\~ao e, por isso, discrimina pouco
-os m\'etodos.}
+Neste regime o indicador est\'a pr\'oximo da satura\c{c}\~ao, e \'e o
+$\NIGDplus$ que d\'a mais resolu\c{c}\~ao entre os m\'etodos.}
 \end{columns}
 
 \end{frame}
