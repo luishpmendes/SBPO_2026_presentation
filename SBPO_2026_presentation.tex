@@ -58,10 +58,6 @@
 \definecolor{mygray}{RGB}{200, 200, 200}
 \definecolor{mygreen}{RGB}{76, 169, 12}
 
-% Estilos das figuras adaptadas de Andrade et al. (2019).
-% Precisa vir depois das cores acima, das quais depende.
-\input{tikz/andrade_styles.tex}
-
 % Painéis \PainelNIGD e \PainelHVR (slide dos indicadores).
 % Também dependem das cores acima.
 \input{tikz/indicators.tex}
@@ -72,6 +68,9 @@
 
 \newcommand{\NIGDplus}{\mathit{NIGD^{+}}}
 \newcommand{\HVR}{\mathit{HVR}}
+
+% Horizonte cíclico estendido, como no artigo.
+\newcommand{\Text}{\widetilde{T}}
 
 % Nomes de algoritmos, sempre com a mesma tipografia.
 % Os nomes já são caixa-alta e a Open Sans não tem versalete, portanto
@@ -170,35 +169,29 @@ Problem} (TMDSP), de Andrade et al.\ (2019):}
 \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
 
 \begin{columns}[T,onlytextwidth]
-\column{0.48\textwidth}
+\column{0.46\textwidth}
 \footnotesize
-\textbf{Dados}
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item<1-> $J$ --- \textbf{tarefas}: ve\'iculos, com demanda $d_{j}$.
-\item<1-> $M$ --- \textbf{m\'aquinas}: setores da rede.
-\item<1-> $T$ --- \textbf{per\'iodos} do horizonte.
-\item<2-> $c_{mt}$, $\eta_{mt}$ --- capacidade e taxa da m\'aquina,
-      \alert{vari\'aveis no tempo}.
-\item<3-> $q_{jmt}$ --- capacidade que $j$ consome em $m$ no per\'iodo $t$;
-      \alert{s\'o existe} se o ve\'iculo estiver sob aquele setor ali.
+\textbf{O FOTA vira escalonamento}
+\begin{itemize}\setlength{\itemsep}{4pt}
+\item<1-> $J$ --- \textbf{tarefas}: os ve\'iculos a atualizar.
+\item<1-> $M$ --- \textbf{m\'aquinas}: os setores da rede.
+\item<1-> $T$ --- \textbf{per\'iodos}: os intervalos do horizonte.
 \end{itemize}
 
-\column{0.48\textwidth}
+\column{0.50\textwidth}
 \footnotesize
-\textbf{Regras}
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item<4-> Cada tarefa usa \textbf{uma m\'aquina por per\'iodo}, no m\'aximo;
-\item<4-> \'e \textbf{preempt\'avel entre per\'iodos} e fica ativa at\'e
-      atender $d_{j}$;
-\item<4-> $C_{j}$ \'e o \textbf{\'ultimo per\'iodo ativo} de $j$.
-\item<5-> Por per\'iodo: $r_{\max}$ limita a vaz\~ao total da rede e
-      $k_{\max}$, o n\'umero de tarefas ativas.
+\textbf{Regras de um escalonamento vi\'avel}
+\begin{itemize}\setlength{\itemsep}{4pt}
+\item<2-> Cada tarefa usa \textbf{uma m\'aquina por per\'iodo}, no m\'aximo;
+\item<2-> \'e \textbf{preempt\'avel entre per\'iodos} e fica \emph{ativa}
+      at\'e atender toda a sua demanda;
+\item<2-> $C_{j}$ \'e o \textbf{\'ultimo per\'iodo ativo} de $j$.
 \end{itemize}
 \end{columns}
 
-\vspace{0.1em}
+\vspace{0.4em}
 
-\onslide<6->{\takeaway{Objetivo original, mono-objetivo:
+\onslide<3->{\takeaway{Objetivo original, mono-objetivo:
 $\displaystyle \min \sum_{j \in J} C_{j}$ --- o tempo total de conclus\~ao.}}
 
 \end{frame}
@@ -258,43 +251,171 @@ $\displaystyle \min \sum_{j \in J} C_{j}$
 
 \end{frame}
 
+%========================================================================================
+\section{Formulação}
+
 %----------------------------------------------------------------------------------------
-% 5. FORMULAÇÃO DO MOTMDSP
+% NOTAÇÃO: CONJUNTOS E PARÂMETROS (Tabela 1 do artigo)
 %----------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{MOTMDSP: formula\c{c}\~ao}
+\frametitle{Nota\c{c}\~ao: conjuntos e par\^ametros}
 
 \begin{center}
-{\large $\displaystyle \min\ C_{\max}
- \qquad\text{e}\qquad
- \min \sum_{j \in J} C_{j}$}
+\footnotesize
+\begin{tabular}{@{} l l @{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Conjuntos}} \\
+\midrule
+$J$         & Tarefas (ve\'iculos a serem atualizados) \\
+$M$         & M\'aquinas (setores de torres celulares) \\
+$T$         & Per\'iodos-base em um horizonte (indexados por $t$) \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Par\^ametros}} \\
+\midrule
+$c_{mt}$    & Capacidade da m\'aquina $m$ no per\'iodo $t$ (muu) \\
+$\eta_{mt}$ & Taxa de produ\c{c}\~ao da m\'aquina $m$ no per\'iodo $t$ (pu por muu) \\
+$q_{jmt}$   & Consumo de capacidade da tarefa $j$ em $m$ no per\'iodo $t$ (muu) \\
+$d_{j}$     & Demanda total da tarefa $j$ (pu) \\
+$r_{\max}$  & Limite global de capacidade por per\'iodo (pu) \\
+$r_{\min}$  & Consumo m\'inimo de recursos por tarefa (pu) \\
+$k_{\max}$  & N\'umero m\'aximo de tarefas ativas em um per\'iodo \\
+\bottomrule
+\end{tabular}
 \end{center}
 
-{\small sujeito a, para todo per\'iodo $t$ (com $\hat{t} = t \bmod |T|$):}
+\vspace{0.2em}
+
+{\scriptsize \textbf{Horizonte c\'iclico:} estendemos $T$ para
+$\Text = \{0, 1, \ldots, t_{\max}\}$ e mapeamos cada $t \in \Text$ de volta ao
+per\'iodo-base $\hat{t} = t \bmod |T|$; da\'i as vers\~oes $c_{m\hat{t}}$,
+$\eta_{m\hat{t}}$, $q_{jm\hat{t}}$ usadas no modelo.
+\; muu: \emph{machine utilization units}; pu: \emph{production units}.}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% VARIÁVEIS DE DECISÃO
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Vari\'aveis de decis\~ao}
+
+\begin{center}
+\small
+\begin{tabular}{@{} l l @{}}
+\toprule
+\textbf{Vari\'avel} & \textbf{Significado} \\
+\midrule
+$x_{jmt} \in \{0, 1\}$
+  & $1$ se a tarefa $j$ \'e atribu\'ida \`a m\'aquina $m$ no per\'iodo $t$ \\
+$y_{jmt} \in \mathbb{R}_{\ge 0}$
+  & capacidade da m\'aquina $m$ usada por $j$ no per\'iodo $t$ (muu) \\
+$s_{jt} \in \{0, 1\}$
+  & $1$ se a tarefa $j$ \textbf{inicia} no per\'iodo $t$ \\
+$a_{jt} \in \{0, 1\}$
+  & $1$ se a tarefa $j$ est\'a \textbf{ativa} em $t$ (escalonada ou em execu\c{c}\~ao) \\
+$f_{jt} \in \{0, 1\}$
+  & $1$ se a tarefa $j$ \textbf{termina} em $t$ (indicador de \emph{pseudo}-t\'ermino) \\
+$C_{j} \in \mathbb{N}$
+  & tempo de conclus\~ao de $j$: o \'indice do per\'iodo em que $j$ termina \\
+$C_{\max} \in \mathbb{N}$
+  & \emph{makespan}: o maior tempo de conclus\~ao entre todas as tarefas \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \smallskip
 
-{\footnotesize
-\begin{tabular}{@{} r @{\;\;} l @{}}
-$\displaystyle\sum_{m \in M} x_{jmt} \le 1$
-  & uma m\'aquina por per\'iodo, para cada tarefa $j$ \\[0.85em]
-$\displaystyle\sum_{j \in J} y_{jmt} \le c_{m\hat{t}}$
-  & capacidade da m\'aquina $m$ \\[0.85em]
-$\displaystyle\sum_{j \in J}\sum_{m \in M} \eta_{m\hat{t}}\, y_{jmt} \le r_{\max}$
-  & vaz\~ao total da rede \\[0.85em]
-$\displaystyle\sum_{j \in J} a_{jt} \le k_{\max}$
-  & tarefas ativas simultaneamente \\[0.85em]
-$\displaystyle\sum_{m \in M}\sum_{t} \eta_{m\hat{t}}\, y_{jmt} = d_{j}$
-  & demanda da tarefa $j$ atendida \\[0.85em]
-$C_{j} \ge t\,a_{jt}, \quad C_{\max} \ge C_{j}$
-  & tempos de conclus\~ao \\
-\end{tabular}}
+{\footnotesize Para $t \in \Text\setminus\{0\}$, $t'(j, t)$ denota o
+\textbf{per\'iodo predecessor imediato} de $t$ no horizonte c\'iclico, usado
+para propagar a atividade da tarefa.}
 
-\medskip
+\srcnote{O MOTMDSP \'e formulado como um programa inteiro misto (MIP) que segue
+de perto o modelo mono-objetivo de Andrade et al. (2019)}
 
-\srcnote{$x_{jmt}$: atribui\c{c}\~ao; $y_{jmt}$: capacidade usada;
-$a_{jt}$: tarefa ativa. As restri\c{c}\~oes de in\'icio, propaga\c{c}\~ao de
-atividade e t\'ermino seguem Andrade et al. (2019).}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% FORMULAÇÃO I: OBJETIVOS E LÓGICA DE ATRIBUIÇÃO -- (1)--(6)
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Formula\c{c}\~ao I: objetivos e l\'ogica de atribui\c{c}\~ao}
+
+{\small
+\begin{alignat}{1}
+\min \ & \sum_{j \in J}{C_{j}} \tag{1} \\
+\min \ & C_{\max} \tag{2}
+\end{alignat}}
+
+\vspace{-1.1em}
+
+{\small
+\begin{alignat}{2}
+\text{sujeito a} \quad
+&C_{j} \ge t\,a_{jt},\quad&&\forall j \in J,\ \forall t \in \Text \tag{3} \\
+&\sum_{m \in M}{x_{jmt}} \le 1,\quad&&\forall j \in J,\ \forall t \in \Text \tag{4} \\
+&\sum_{t \in \Text}{s_{jt}} = 1,\quad&&\forall j \in J \tag{5} \\
+&a_{jt} \ge \frac{1}{|M|}\sum_{m \in M}{x_{jmt}},\quad&&\forall j \in J,\ \forall t \in \Text \tag{6}
+\end{alignat}}
+
+\vfill
+
+{\scriptsize
+(3)--(6) definem os tempos de conclus\~ao e a l\'ogica de atribui\c{c}\~ao e
+in\'icio: $C_{j}$ \'e o \'ultimo per\'iodo ativo, cada tarefa \'e atribu\'ida a
+no m\'aximo uma m\'aquina por per\'iodo e inicia exatamente uma vez.}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% FORMULAÇÃO II: ATIVIDADE, TÉRMINO E CONSUMO -- (7)--(12)
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Formula\c{c}\~ao II: atividade, t\'ermino e consumo}
+
+{\small
+\begin{alignat}{2}
+&a_{j0} = s_{j0},\quad&&\forall j \in J \tag{7} \\
+&a_{jt} \le s_{jt} + a_{j t'(j,t)},\quad&&\forall j \in J,\ \forall t \in \Text\setminus\{0\} \tag{8} \\
+&f_{j t_{\max}} = a_{j t_{\max}},\quad&&\forall j \in J \tag{9} \\
+&f_{jt} \le 1 - \frac{1}{|\Text|}\sum_{t'>t}{a_{jt'}},\quad&&\forall j \in J,\ \forall t \in \Text\setminus\{t_{\max}\} \tag{10} \\
+&y_{jmt} \le q_{jm\hat{t}}\,x_{jmt},\quad&&\forall j \in J,\ \forall m \in M,\ \forall t \in \Text \tag{11} \\
+&y_{jmt} \ge q_{jm\hat{t}}\,\big(x_{jmt} - f_{jt}\big),\quad&&\forall j \in J,\ \forall m \in M,\ \forall t \in \Text \tag{12}
+\end{alignat}}
+
+\vfill
+
+{\scriptsize
+(7)--(8) propagam a atividade ao longo do horizonte, sem ``pular'' per\'iodos
+dispon\'iveis, at\'e a conclus\~ao. (9)--(10) identificam o per\'iodo final.
+(11)--(12) conectam $y_{jmt}$ e $x_{jmt}$: o consumo s\'o \'e permitido quando
+a tarefa est\'a atribu\'ida e, exceto no per\'iodo de t\'ermino, imp\~oe-se o
+uso integral $q_{jm\hat{t}}$, evitando subutiliza\c{c}\~ao.}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% FORMULAÇÃO III: CAPACIDADES, DEMANDA E MAKESPAN -- (13)--(17)
+%----------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Formula\c{c}\~ao III: capacidades, demanda e \emph{makespan}}
+
+{\small
+\begin{alignat}{2}
+&\sum_{j \in J}{y_{jmt}} \le c_{m\hat{t}},\quad&&\forall m \in M,\ \forall t \in \Text \tag{13} \\
+&\sum_{j \in J}\sum_{m \in M}{\eta_{m\hat{t}}\,y_{jmt}} \le r_{\max},\quad&&\forall t \in \Text \tag{14} \\
+&\sum_{j \in J}{a_{jt}} \le k_{\max},\quad&&\forall t \in \Text \tag{15} \\
+&\sum_{m \in M}\sum_{t \in \Text}{\eta_{m\hat{t}}\,y_{jmt}} = d_{j},\quad&&\forall j \in J \tag{16} \\
+&C_{\max} \ge C_{j},\quad&&\forall j \in J \tag{17}
+\end{alignat}}
+
+\vspace{-0.4em}
+
+{\scriptsize
+(13)--(15) imp\~oem a capacidade de cada m\'aquina, o limite global por
+per\'iodo e o m\'aximo de tarefas ativas. (16) garante o atendimento da demanda
+$d_{j}$ e (17) define o \emph{makespan} $C_{\max}$. O requisito m\'inimo
+$r_{\min}$ \'e tratado no \textbf{pr\'e-processamento}, removendo as tarefas
+n\~ao escalon\'aveis.}
 
 \end{frame}
 
@@ -346,18 +467,20 @@ Decodificador mono-objetivo \newline
 \begin{frame}
 \frametitle{Chaves aleat\'orias definem prioridades de escalonamento}
 
-Um cromossomo \'e um vetor com \textbf{uma chave por tarefa}:
+{\small Um cromossomo \'e um vetor com \textbf{uma chave por tarefa}:}
+\vspace{-0.5em}
 \[
-\mathbf{v} = (v_1, \ldots, v_{|J|}), \qquad v_j \in [0,\,1).
+\textstyle \mathbf{v} = (v_1, \ldots, v_{|J|}), \qquad v_j \in [0,\,1).
 \]
+\vspace{-1.4em}
 
-\textbf{Decodifica\c{c}\~ao:} ordenar as tarefas por valor \textbf{decrescente}
-da chave $\Rightarrow$ ordem de prioridade.
+{\small\textbf{Decodifica\c{c}\~ao:} ordenar as tarefas por valor
+\textbf{decrescente} da chave $\Rightarrow$ ordem de prioridade.}
 
-\bigskip
+\smallskip
 
 \begin{center}
-\begin{tikzpicture}[>=Stealth, font=\small, x=1cm, y=1cm]
+\begin{tikzpicture}[>=Stealth, font=\small, x=0.86cm, y=0.86cm]
 % vetor original
 \node[font=\small, anchor=east] at (-0.52,0) {$\mathbf{v}$:};
 \foreach \val [count=\i from 0] in
@@ -382,64 +505,17 @@ da chave $\Rightarrow$ ordem de prioridade.
 \end{tikzpicture}
 \end{center}
 
-\bigskip
+\smallskip
 
-\takeaway{Pequenas perturba\c{c}\~oes nas chaves causam pequenas mudan\c{c}as na
-ordem: o espa\c{c}o de permuta\c{c}\~oes \'e explorado \textbf{sem operadores
-especializados}.}
+{\footnotesize
+Nessa ordem, cada tarefa ocupa gulosamente os intervalos m\'aquina--per\'iodo
+dispon\'iveis mais cedo. $C_{j}$ \'e o \'ultimo per\'iodo em que a tarefa
+esteve ativa; alocadas \emph{todas} as tarefas, o decodificador devolve
+$\mathbf{F} = (C_{\max},\ \sum_{j} C_{j})$.}
 
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-% 7. DECODIFICADOR
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Decodificador: de prioridades a escalonamentos vi\'aveis}
-
-\begin{center}
-\resizebox{0.97\textwidth}{!}{\input{tikz/decoder_example.tex}}
-\end{center}
-
-\vfill
-
-{\small
-Na ordem de prioridade, cada tarefa ocupa gulosamente os intervalos
-m\'aquina--per\'iodo dispon\'iveis mais cedo. $C_{j}$ \'e o \'ultimo per\'iodo
-em que a tarefa esteve ativa; alocadas \emph{todas} as tarefas, o decodificador
-devolve $\mathbf{F} = (C_{\max},\ \sum_{j} C_{j})$.}
-
-\vspace{0.2em}
-
-{\raggedleft\scriptsize\color{black!55}As cores identificam a tarefa.
-Decodificador de Andrade et al. (2019), aqui estendido para devolver os
-\textbf{dois} objetivos\par}
-
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-% 8. POR QUE UMA TAREFA PRECISA ESPERAR
-%----------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Por que uma tarefa precisa esperar}
-
-\begin{center}
-\resizebox{0.93\textwidth}{!}{\input{tikz/scheduling_steps.tex}}
-\end{center}
-
-\vfill
-
-{\small
-\only<1>{A tarefa A, de maior prioridade, consome a capacidade dispon\'ivel
-em $t_1$.}%
-\only<2>{Sob $c_{mt}$, $r_{\max}$ e $k_{\max}$ \emph{simultaneamente}, n\~ao
-resta aloca\c{c}\~ao vi\'avel para a tarefa B em $t_1$: ela \'e
-\alert{empurrada} e s\'o come\c{c}a em $t_2$.}}
-
-\vspace{0.2em}
-
-\takeaway{Removidas as tarefas n\~ao escalon\'aveis no pr\'e-processamento, o
-decodificador \textbf{sempre} produz escalonamento vi\'avel: sem reparo nem
-penalidade.}
+\takeaway{Pequenas perturba\c{c}\~oes nas chaves causam pequenas mudan\c{c}as
+na ordem: o espa\c{c}o de permuta\c{c}\~oes \'e explorado \textbf{sem
+operadores especializados}.}
 
 \end{frame}
 
@@ -449,13 +525,13 @@ penalidade.}
 \begin{frame}
 \frametitle{Ciclo evolutivo do \alg{NS-BRKGA}}
 
-{\small O motor evolutivo \'e \alert{independente do problema}: toda a
+{\footnotesize O motor evolutivo \'e \alert{independente do problema}: toda a
 l\'ogica do MOTMDSP est\'a no decodificador.}
 
-\vfill
+\vspace{0.2em}
 
 \begin{center}
-\scalebox{0.43}{
+\scalebox{0.375}{
 \begin{tikzpicture}
 % --- População Pt ---
 \node [fill=mydarkblue1, text=white, text centered, outer sep=0, text width=88,
@@ -504,11 +580,14 @@ l\'ogica do MOTMDSP est\'a no decodificador.}
 
 \vfill
 
-{\small
+{\scriptsize
 O elite vem do \textbf{non-dominated sorting}, com \textbf{crowding distance} e
 diversidade genot\'ipica no desempate. Comp\~oem ainda o m\'etodo m\'ultiplas
 popula\c{c}\~oes com migra\c{c}\~ao, \emph{implicit path-relinking},
 \emph{shaking} e \emph{reset} parcial.}
+
+\takeaway{O decodificador \textbf{sempre} produz escalonamento vi\'avel:
+sem reparo nem penalidade.}
 
 \end{frame}
 
